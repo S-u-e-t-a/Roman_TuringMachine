@@ -142,7 +142,22 @@ namespace Turing
             }
         }
 
+        private TapeItem selectedTapeItem;
+        public TapeItem SelectedTapeItem
+        {
+            get => this.selectedTapeItem;
 
+            set
+            {
+                if (Equals(value, this.selectedTapeItem))
+                {
+                    return;
+                }
+
+                this.selectedTapeItem = value;
+                this.OnPropertyChanged();
+            }
+        }
 
 
         #endregion
@@ -178,7 +193,7 @@ namespace Turing
                                window.Top = PanelY + Top;
 
                                window.ShowDialog();
-                               Machine.TapeItems[SelectedIndex].Letter = (window.DataContext as AddSymbolVM).SelectedItem;
+                               SelectedTapeItem.Letter = (window.DataContext as AddSymbolVM).SelectedItem;
                                SelectedIndex = -1;
                            }
                            
