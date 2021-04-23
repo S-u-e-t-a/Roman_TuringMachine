@@ -16,13 +16,10 @@ namespace Turing
         public TuringMachine()
         {
             q = 1;
-            Instructions = new Dictionary<char, List<Comm>>();
+            Instructions = new Dictionary<char, List<string>>();
             TapeItems = new List<TapeItem>();
         }
-
-
         private int q;
-
         private string alpabet;
         public string Alpabet
         {
@@ -71,8 +68,8 @@ namespace Turing
             }
         }
 
-        private Dictionary<char, List<Comm>> instructions;
-        private List<Comm> CloneListComm(List<Comm> list)
+        private Dictionary<char, List<string>> instructions;
+        /*private List<Comm> CloneListComm(List<Comm> list)
         {
             var clone = new List<Comm>();
             foreach (var comm in list)
@@ -90,8 +87,8 @@ namespace Turing
             }
 
             return clone;
-        }
-        public Dictionary<char, List<Comm>> Instructions
+        }*/
+        public Dictionary<char, List<string>> Instructions
         {
             get => instructions;
             set
@@ -100,6 +97,9 @@ namespace Turing
                 OnPropertyChanged();
             }
         }
+
+
+        
         private List<TapeItem> tapeItems;
         public List<TapeItem> TapeItems
         {
@@ -116,7 +116,7 @@ namespace Turing
         {
             TapeItems[currentIndex].Color = "#ffffff";
             var currentState = TapeItems[CurrentIndex];
-            var instruction = Instructions[currentState.Letter][q - 1];
+            var instruction = new Comm (Instructions[currentState.Letter][q - 1]);
 
 
             TapeItems[CurrentIndex].Letter = instruction.Sym;
@@ -151,7 +151,6 @@ namespace Turing
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
-
     }
 
 
@@ -162,6 +161,7 @@ namespace Turing
     }
     class Comm : INotifyPropertyChanged
     {
+        #region fields
         private char sym;
         private direction direction; // 0-left 1-right
         private int condition;
@@ -195,6 +195,7 @@ namespace Turing
         }
 
 
+        #endregion
 
 
         public Comm(char sym, direction dir, int condition)
