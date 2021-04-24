@@ -11,8 +11,7 @@
         d:DataContext="{d:DesignInstance local:MainWindowVM}"
         Top="{Binding Path=Top, Mode=TwoWay}"
         Left="{Binding Path=Left, Mode=TwoWay}" 
-        Closing="DataWindow_Closing"
-        >
+        Closing="DataWindow_Closing" >
     
 
     <Grid>
@@ -54,7 +53,7 @@
             </StackPanel>
             <Label Grid.Column="2">Скорость</Label>
             <TextBox Text="{Binding Path=Machine.Delay}" Grid.Column="3" />
-            <Button Grid.Column="4" Command="{Binding CalcCommand}" />
+            <Button Grid.Column="4" Command="{Binding CalcCommand}"  Content="Сделать магию"/>
         </Grid>
 
         <Grid Grid.Row="2">
@@ -176,20 +175,22 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                             <ColumnDefinition />
-                            <ColumnDefinition />
+
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" />
-                        <Button Grid.Column="1" />
-                        <Button Grid.Column="2" />
+                        <Button Grid.Column="0" Command="{Binding AddLeftCommand}" Content="Вставить столбец слева"/>
+                        <Button Grid.Column="1" Command="{Binding AddRightCommand}"  Content="Вставить столбец справа"/>
+                        <Button Grid.Column="2" Command="{Binding DelColumnCommand}"  Content="Удалить столбец"/>
                     </Grid>
-                    
+
                     <DataGrid Grid.Row="2" x:Name="dg" AutoGenerateColumns="True" 
                               
                               dataGrid2D:ItemsSource.RowsSource="{Binding Machine.Instructions.Values}"
                               dataGrid2D:ItemsSource.ColumnHeadersSource="{Binding ColumnHeaders}"
                               dataGrid2D:ItemsSource.RowHeadersSource="{Binding RowHeaders}" 
+                              dataGrid2D:Selected.Index="{Binding Path=SelectedIndexIns}"
                               SelectionMode="Single" SelectionUnit="Cell"
                     />
+
                    
                 </Grid>
                 <GridSplitter Grid.Column="1" ShowsPreview="False" Width="3"

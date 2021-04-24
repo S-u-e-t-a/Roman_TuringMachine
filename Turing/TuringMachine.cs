@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -16,7 +18,7 @@ namespace Turing
         public TuringMachine()
         {
             q = 1;
-            Instructions = new Dictionary<char, List<string>>();
+            Instructions = new Dictionary<char, ObservableCollection<string>>();
             TapeItems = new List<TapeItem>();
         }
         private int q;
@@ -68,7 +70,7 @@ namespace Turing
             }
         }
 
-        private Dictionary<char, List<string>> instructions;
+        private Dictionary<char, ObservableCollection<string>> instructions;
         /*private List<Comm> CloneListComm(List<Comm> list)
         {
             var clone = new List<Comm>();
@@ -88,7 +90,7 @@ namespace Turing
 
             return clone;
         }*/
-        public Dictionary<char, List<string>> Instructions
+        public Dictionary<char, ObservableCollection<string>> Instructions
         {
             get => instructions;
             set
@@ -143,6 +145,36 @@ namespace Turing
 
             q = 1;
         }
+
+
+        public void addColumnLeft(int currentColumn)
+        {
+            foreach (var keypair in Instructions)
+            {
+                keypair.Value.Insert(currentColumn, null);
+
+            }
+        }
+
+        public void addColumnRight(int currentColumn)
+        {
+            foreach (var keypair in Instructions)
+            {
+                keypair.Value.Insert(currentColumn+1,null);
+
+            }
+        }
+
+
+        public void delColumn(int currentColumn)
+        {
+            foreach (var keypair in Instructions)
+            {
+                keypair.Value.RemoveAt(currentColumn);
+
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 

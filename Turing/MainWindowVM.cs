@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -10,6 +11,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Gu.Wpf.DataGrid2D;
 
 namespace Turing
 {
@@ -90,8 +92,9 @@ namespace Turing
         {
             get
             {
+                int lenofinstrutions = Machine.Instructions[Machine.Instructions.ElementAt(0).Key].Count; // ультра говнокод (получаем количество элементов в массиве)
                 List<string> headers = new List<string>();
-                for (int i = 0; i < Machine.Instructions.Keys.Count; i++)
+                for (int i = 0; i < lenofinstrutions; i++)
                 {
                     headers.Add($"Q{i + 1}");
                 }
@@ -142,6 +145,25 @@ namespace Turing
             }
         }
 
+
+        private RowColumnIndex selectedIndexIns;
+        public RowColumnIndex SelectedIndexIns
+        {
+            get => this.selectedIndexIns;
+
+            set
+            {
+                if (Equals(value, this.selectedIndexIns))
+                {
+                    return;
+                }
+
+                this.selectedIndexIns = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+
         private TapeItem selectedTapeItem;
         public TapeItem SelectedTapeItem
         {
@@ -177,6 +199,56 @@ namespace Turing
             }
         }
 
+
+        RelayCommand addLeftCommand;
+        public RelayCommand AddLeftCommand
+        {
+            get
+            {
+                return addLeftCommand ??
+                       (addLeftCommand = new RelayCommand((o) =>
+                       {
+                           Machine.addColumnLeft(SelectedIndexIns.Column);
+                           OnPropertyChanged();
+                           OnPropertyChanged("ColumnHeaders");
+                       }));
+            }
+        }
+
+
+        RelayCommand addRightCommand;
+        public RelayCommand AddRightCommand
+        {
+            get
+            {
+                return addRightCommand ??
+                       (addRightCommand = new RelayCommand((o) =>
+                       {
+                           Machine.addColumnRight(SelectedIndexIns.Column);
+                           OnPropertyChanged();
+                           OnPropertyChanged("ColumnHeaders");
+                       }));
+            }
+        }
+
+        RelayCommand delColumnCommand;
+        public RelayCommand DelColumnCommand
+        {
+            get
+            {
+                return delColumnCommand ??
+                       (delColumnCommand = new RelayCommand((o) =>
+                       {
+                           Machine.delColumn(SelectedIndexIns.Column);
+                           OnPropertyChanged();
+                           OnPropertyChanged("ColumnHeaders");
+                       }));
+            }
+        }
+
+
+
+
         RelayCommand cellSelectedCommand;
         public RelayCommand CellSelectedCommand
         {
@@ -210,11 +282,11 @@ namespace Turing
             Machine = new TuringMachine();
             Machine.CurrentIndex = 99;
             Machine.Alpabet = "01 ";
-            Machine.Instructions = new Dictionary<char, List<string>>();
+            Machine.Instructions = new Dictionary<char, ObservableCollection<string>>();
 
-            Machine.Instructions['0'] = new List<string>();
-            Machine.Instructions['1'] = new List<string>();
-            Machine.Instructions[' '] = new List<string>();
+            Machine.Instructions['0'] = new ObservableCollection<string>();
+            Machine.Instructions['1'] = new ObservableCollection<string>();
+            Machine.Instructions[' '] = new ObservableCollection<string>();
 
             Machine.Instructions['0'].Add(null);
             Machine.Instructions['0'].Add(null);
