@@ -47,10 +47,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-                <TextBlock Text="{Binding SelectedIndex, StringFormat='X={0}'}" />
-                
-            </StackPanel>
+            <Button Command="{Binding StepCommand}"></Button>
             <Label Grid.Column="2">Скорость</Label>
             <TextBox Text="{Binding Path=Machine.Delay}" Grid.Column="3" />
             <Button Grid.Column="4" Command="{Binding CalcCommand}"  Content="Сделать магию"/>
@@ -77,15 +74,14 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-
-            <!--BeginningEdit="Tape_SelectionChanged"
-            <DataGrid dataGrid2D:ItemsSource.TransposedSource="{Binding Machine.Instructions}">
-                <dataGrid2D:RowColumnIndex>
-
-                </dataGrid2D:RowColumnIndex>
-
-            </DataGrid> -->
-            <DataGrid Grid.Row="0" 
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Command="{Binding MoveLeftCommand}" Content="&lt;" />
+                <DataGrid Grid.Column="1" 
                       ColumnWidth="30"
                       IsReadOnly="True"  
                       x:Name="Tape" 
@@ -103,53 +99,54 @@
                       SelectionMode="Single"
                       >
 
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="Value" Binding="{Binding Path=Letter}" />
-                    <DataGridTextColumn Header="Index" Binding="{Binding Path=Index}" />
-                </DataGrid.Columns>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Path=Letter}" />
+                        <DataGridTextColumn Header="Index" Binding="{Binding Path=Index}" />
+                    </DataGrid.Columns>
 
 
-                <DataGrid.LayoutTransform>
-                    <TransformGroup>
-                        <RotateTransform Angle="-90" />
-                    </TransformGroup>
-                </DataGrid.LayoutTransform>
+                    <DataGrid.LayoutTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="-90" />
+                        </TransformGroup>
+                    </DataGrid.LayoutTransform>
 
-                <DataGrid.ColumnHeaderStyle>
-                    <Style TargetType="{x:Type DataGridColumnHeader}">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type DataGridColumnHeader}">
 
-                        <Setter Property="LayoutTransform">
-                            <Setter.Value>
-                                <TransformGroup>
-                                    <RotateTransform Angle="90" />
-                                </TransformGroup>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DataGrid.ColumnHeaderStyle>
+                            <Setter Property="LayoutTransform">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="90" />
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
 
-                <DataGrid.CellStyle>
-                    <Style TargetType="{x:Type DataGridCell}">
-                        <Setter Property="Background" Value="{Binding Path=Color}" />
-                        <Setter Property="LayoutTransform">
-                            <Setter.Value>
-                                <TransformGroup>
-                                    <RotateTransform Angle="90" />
-                                </TransformGroup>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DataGrid.CellStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Background" Value="{Binding Path=Color}" />
+                            <Setter Property="LayoutTransform">
+                                <Setter.Value>
+                                    <TransformGroup>
+                                        <RotateTransform Angle="90" />
+                                    </TransformGroup>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.CellStyle>
 
-                <i:Interaction.Triggers>
-                    <i:EventTrigger EventName="SelectedCellsChanged">
-                        <i:InvokeCommandAction
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="SelectedCellsChanged">
+                            <i:InvokeCommandAction
                             Command="{Binding CellSelectedCommand}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-            </DataGrid>
-
-
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </DataGrid>
+                <Button Grid.Column="2" Command="{Binding MoveRightCommand}" Content="&gt;" />
+            </Grid>
+            
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />

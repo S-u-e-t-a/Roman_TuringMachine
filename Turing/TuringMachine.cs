@@ -15,12 +15,7 @@ namespace Turing
     class TuringMachine : INotifyPropertyChanged
     {
 
-        public TuringMachine()
-        {
-            q = 1;
-            Instructions = new Dictionary<char, ObservableCollection<string>>();
-            TapeItems = new List<TapeItem>();
-        }
+        #region Fields
         private int q;
         private string alpabet;
         public string Alpabet
@@ -48,17 +43,21 @@ namespace Turing
             get => currentIndex;
             set
             {
+                try { TapeItems[CurrentIndex].Color = "#ffffff"; }
+                catch { }
+
                 currentIndex = value;
                 try { TapeItems[currentIndex].Color = "#ffff66"; }
                 catch { }
+
                 OnPropertyChanged();
             }
         }
 
-        private int previosIndex
+       /* private int previosIndex
         {
             get => previosIndex;
-        }
+        }*/
         private int delay;
         public int Delay
         {
@@ -71,25 +70,7 @@ namespace Turing
         }
 
         private Dictionary<char, ObservableCollection<string>> instructions;
-        /*private List<Comm> CloneListComm(List<Comm> list)
-        {
-            var clone = new List<Comm>();
-            foreach (var comm in list)
-            {
-                clone.Add(new Comm(comm.Sym,comm.Direction,comm.Condition));
-            }
-            return clone;
-        }
-        private Dictionary<char, List<Comm>> CloneInstrutions()
-        {
-            var clone = new Dictionary<char, List<Comm>>();
-            foreach (var cond in instructions)
-            {
-                clone[cond.Key] = CloneListComm(cond.Value);
-            }
 
-            return clone;
-        }*/
         public Dictionary<char, ObservableCollection<string>> Instructions
         {
             get => instructions;
@@ -101,7 +82,7 @@ namespace Turing
         }
 
 
-        
+
         private List<TapeItem> tapeItems;
         public List<TapeItem> TapeItems
         {
@@ -114,11 +95,23 @@ namespace Turing
         }
 
 
+
+
+        #endregion
+        public TuringMachine()
+        {
+            q = 1;
+            Instructions = new Dictionary<char, ObservableCollection<string>>();
+            TapeItems = new List<TapeItem>();
+        }
+
+        #region Methods
+
         public void makeStep()
         {
-            TapeItems[currentIndex].Color = "#ffffff";
+            //TapeItems[currentIndex].Color = "#ffffff";
             var currentState = TapeItems[CurrentIndex];
-            var instruction = new Comm (Instructions[currentState.Letter][q - 1]);
+            var instruction = new Comm(Instructions[currentState.Letter][q - 1]);
 
 
             TapeItems[CurrentIndex].Letter = instruction.Sym;
@@ -134,11 +127,11 @@ namespace Turing
             q = instruction.Condition;
         }
 
-        public async void Calc()
+        public void Calc()
         {
             Delay = 100;
 
-            while(q!=0)
+            while (q != 0)
             {
                 makeStep();
             }
@@ -160,7 +153,7 @@ namespace Turing
         {
             foreach (var keypair in Instructions)
             {
-                keypair.Value.Insert(currentColumn+1,null);
+                keypair.Value.Insert(currentColumn + 1, null);
 
             }
         }
@@ -176,6 +169,10 @@ namespace Turing
         }
 
 
+        #endregion
+
+        #region PropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")
@@ -183,12 +180,16 @@ namespace Turing
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
+
+        #endregion
+
     }
 
+    #region Misc
 
     enum direction
     {
-        left =0,
+        left = 0,
         right
     }
     class Comm : INotifyPropertyChanged
@@ -239,7 +240,7 @@ namespace Turing
 
 
 
-    public Comm(string command)
+        public Comm(string command)
         {
             Sym = command[0];
             Condition = Int32.Parse(command[2].ToString());
@@ -258,11 +259,11 @@ namespace Turing
             string dir;
             if (Direction == direction.right)
             {
-                 dir = ">";
+                dir = ">";
             }
             else
             {
-                 dir = "<";
+                dir = "<";
             }
             return Sym + dir + Condition;
         }
@@ -274,4 +275,7 @@ namespace Turing
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
     }
+
+    #endregion
+
 }

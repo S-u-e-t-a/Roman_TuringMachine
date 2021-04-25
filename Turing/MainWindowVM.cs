@@ -18,20 +18,9 @@ namespace Turing
     class MainWindowVM : INotifyPropertyChanged
     {
         #region Fields
-
-       /* public List<List<char>> kkk
-        {
-            get
-            {
-                return new List<List<char>>() {Machine.TapeItems.ToList()};
-            }
-        }*/
-
-
-
+        #region FieldsForMouse
         private double top;
         private double left;
-
         public double Top
         {
             get { return top; }
@@ -74,6 +63,9 @@ namespace Turing
                 OnPropertyChanged();
             }
         }
+
+        #endregion
+
 
         private TuringMachine machine;
 
@@ -145,7 +137,7 @@ namespace Turing
             }
         }
 
-
+       
         private RowColumnIndex selectedIndexIns;
         public RowColumnIndex SelectedIndexIns
         {
@@ -184,6 +176,10 @@ namespace Turing
 
         #endregion
 
+        #region Commands
+
+        #region ClaculationsCommands
+
         RelayCommand calcCommand;
         public RelayCommand CalcCommand
         {
@@ -192,13 +188,86 @@ namespace Turing
                 return calcCommand ??
                        (calcCommand = new RelayCommand((o) =>
                        {
-                           Machine.CurrentIndex = 99;
+                           //Machine.CurrentIndex = 99;
                            Machine.Calc();
-                           Machine.CurrentIndex = 99;
+                           //Machine.CurrentIndex = 99;
                        }));
             }
         }
 
+        RelayCommand stepCommand;
+        public RelayCommand StepCommand
+        {
+            get
+            {
+                return stepCommand ??
+                       (stepCommand = new RelayCommand((o) =>
+                       {
+                           //Machine.CurrentIndex = 99;
+                           Machine.makeStep();
+                           //Machine.CurrentIndex = 99;
+                       }));
+            }
+        }
+
+        #endregion
+
+        #region TapeCommands
+
+        RelayCommand moveLeftCommand;
+        public RelayCommand MoveLeftCommand
+        {
+            get
+            {
+                return moveLeftCommand ??
+                       (moveLeftCommand = new RelayCommand((o) =>
+                       {
+                           Machine.CurrentIndex -= 1;
+                       }));
+            }
+        }
+
+        RelayCommand moveRightCommand;
+        public RelayCommand MoveRightCommand
+        {
+            get
+            {
+                return moveRightCommand ??
+                       (moveRightCommand = new RelayCommand((o) =>
+                       {
+                           Machine.CurrentIndex += 1;
+                       }));
+            }
+        }
+
+
+        RelayCommand cellSelectedCommand;
+        public RelayCommand CellSelectedCommand
+        {
+            get
+            {
+                return cellSelectedCommand ??
+                       (cellSelectedCommand = new RelayCommand((o) =>
+                       {
+                           if (SelectedIndex != -1)
+                           {
+                               var window = new AddSymbolWindow(Machine.Alpabet);
+
+                               window.Left = PanelX + Left;
+                               window.Top = PanelY + Top;
+
+                               window.ShowDialog();
+                               SelectedTapeItem.Letter = (window.DataContext as AddSymbolVM).SelectedItem;
+                               SelectedIndex = -1;
+                           }
+
+                       }));
+            }
+        }
+
+        #endregion
+
+        #region InstructionsCommands
 
         RelayCommand addLeftCommand;
         public RelayCommand AddLeftCommand
@@ -246,112 +315,50 @@ namespace Turing
             }
         }
 
+        #endregion
 
+        #endregion
 
-
-        RelayCommand cellSelectedCommand;
-        public RelayCommand CellSelectedCommand
-        {
-            get
-            {
-                return cellSelectedCommand ??
-                       (cellSelectedCommand = new RelayCommand((o) =>
-                       {
-                           if (SelectedIndex != -1)
-                           {
-                               var window = new AddSymbolWindow(Machine.Alpabet);
-
-                               window.Left = PanelX + Left;
-                               window.Top = PanelY + Top;
-
-                               window.ShowDialog();
-                               SelectedTapeItem.Letter = (window.DataContext as AddSymbolVM).SelectedItem;
-                               SelectedIndex = -1;
-                           }
-                           
-                       }));
-            }
-        }
-
-
-        //private List<TapeItem> tapeItems;
         public MainWindowVM()
         {
-            #region filling
+            #region MachineFilling
 
             Machine = new TuringMachine();
-            Machine.CurrentIndex = 99;
+            Machine.CurrentIndex = 9;
             Machine.Alpabet = "01 ";
             Machine.Instructions = new Dictionary<char, ObservableCollection<string>>();
 
-            Machine.Instructions['0'] = new ObservableCollection<string>();
-            Machine.Instructions['1'] = new ObservableCollection<string>();
-            Machine.Instructions[' '] = new ObservableCollection<string>();
-
-            Machine.Instructions['0'].Add(null);
-            Machine.Instructions['0'].Add(null);
-            Machine.Instructions['1'].Add(null);
-            Machine.Instructions['1'].Add(null);
-            Machine.Instructions[' '].Add(null);
-            Machine.Instructions[' '].Add(null);
+            Machine.Instructions['0'] = new ObservableCollection<string>() { null, null, null, null };
+            Machine.Instructions['1'] = new ObservableCollection<string>() { null, null, null, null };
+            Machine.Instructions[' '] = new ObservableCollection<string>() { null, null, null, null };
 
             Machine.Instructions['0'][1] = "1>2";
             Machine.Instructions['1'][1] = "0>2";
             Machine.Instructions[' '][0] = " >2";
             Machine.Instructions[' '][1] = " >0";
 
-            for (int i = -100; i < 100; i++)
+            for (int i = 0; i < 100; i++)
             {
                 Machine.TapeItems.Add(new TapeItem() {Color = "#ffffff", Index = i, Letter = ' '});
             }
 
-            Machine.TapeItems[100].Letter = '1';
-            Machine.TapeItems[101].Letter = '0';
-            Machine.TapeItems[102].Letter = '1';
-            Machine.TapeItems[103].Letter = '1';
-            Machine.TapeItems[104].Letter = '0';
-            Machine.TapeItems[105].Letter = '1';
+            Machine.TapeItems[10].Letter = '1';
+            Machine.TapeItems[11].Letter = '0';
+            Machine.TapeItems[12].Letter = '1';
+            Machine.CurrentIndex = 9;
+            //Machine.TapeItems[10].Color = "#ffff66";
 
             #endregion
-            
-
-            Trace.WriteLine("------------------------------------------------");
-            Trace.WriteLine(Machine.Instructions.Keys);
-
         }
 
-        private void FillTape()
-        {
-            //Tape.
-        }
-
-
+        #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
-
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            machine.Calc();
-            machine.CurrentIndex = 99;
-
-        }
-
-        private void Tape_SelectionChanged(object sender, DataGridBeginningEditEventArgs e)
-        {
-            machine.Alpabet = "01 ";
-            //var window = new AddSymbolWindow(machine.Alpabet);
-
-            //window.Left = Mouse.GetPosition(this).X + this.Left;
-            //window.Top = Mouse.GetPosition(this).Y + this.Top;
-            //window.ShowDialog();
-
-        }
-
+        #endregion
 
     }
 }
