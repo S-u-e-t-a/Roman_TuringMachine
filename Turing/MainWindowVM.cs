@@ -315,6 +315,26 @@ namespace Turing
             }
         }
 
+
+        RelayCommand regenerateColumns;
+        public RelayCommand RegenerateColumns
+        {
+            get
+            {
+                return regenerateColumns ??
+                       (regenerateColumns = new RelayCommand((o) =>
+                       {
+                           Machine.regenerate();
+                           //обновляем список (очень криво)
+                           AddLeftCommand.Execute(null); 
+                           DelColumnCommand.Execute(null);
+                           // обновляем названия строк
+                           OnPropertyChanged("RowHeaders");
+                       }));
+            }
+        }
+
+
         #endregion
 
         #endregion

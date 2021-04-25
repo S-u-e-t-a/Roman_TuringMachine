@@ -165,7 +165,7 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0">Алфавит</Label>
-                        <TextBox Grid.Column="1" Text="{Binding Path=Machine.Alpabet, Mode=TwoWay}"/>
+                        <TextBox Grid.Column="1" Text="{Binding Path=Machine.Alpabet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                     </Grid>
                     <Grid Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -186,7 +186,15 @@
                               dataGrid2D:ItemsSource.RowHeadersSource="{Binding RowHeaders}" 
                               dataGrid2D:Selected.Index="{Binding Path=SelectedIndexIns}"
                               SelectionMode="Single" SelectionUnit="Cell"
-                    />
+                    >
+
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="MouseDown">
+                                <i:InvokeCommandAction
+                                    Command="{Binding RegenerateColumns}"/>
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </DataGrid>
 
                    
                 </Grid>

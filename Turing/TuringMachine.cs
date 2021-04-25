@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -107,9 +108,11 @@ namespace Turing
 
         #region Methods
 
+
+        #region Calculations
+
         public void makeStep()
         {
-            //TapeItems[currentIndex].Color = "#ffffff";
             var currentState = TapeItems[CurrentIndex];
             var instruction = new Comm(Instructions[currentState.Letter][q - 1]);
 
@@ -139,6 +142,58 @@ namespace Turing
             q = 1;
         }
 
+        #endregion
+
+        #region ChangeInstructions
+
+        public void regenerate()
+        {
+            Trace.WriteLine(Alpabet);
+            var newKeys = Alpabet.ToCharArray();
+            int lenOfLists = Instructions.ElementAt(0).Value.Count;
+            var oldKeys = Instructions.Keys.ToArray();
+            Trace.WriteLine("Old---------------------");
+            foreach (var VARIABLE in Instructions)
+            {
+                Trace.Write(VARIABLE.Key + " ");
+                foreach (var ls in VARIABLE.Value)
+                {
+                    Trace.Write(ls + " ");
+                }
+                Trace.WriteLine(Environment.NewLine);
+            }
+
+            foreach (var key in newKeys)
+            {
+                if (!Instructions.ContainsKey(key))
+                {
+                    Instructions[key] = new ObservableCollection<string>();
+                    for (int i = 0; i < lenOfLists; i++)
+                    {
+                        Instructions[key].Add(null);
+                    }
+                }
+            }
+
+            for (int i = 0; i < oldKeys.Length; i++)
+            {
+                if (!newKeys.Contains(oldKeys[i]))
+                {
+                    Instructions.Remove(oldKeys[i]);
+                }
+            }
+            Trace.WriteLine("New---------------------");
+            foreach (var VARIABLE in Instructions)
+            {
+                Trace.Write(VARIABLE.Key + " ");
+                foreach (var ls in VARIABLE.Value)
+                {
+                    Trace.Write(ls + " ");
+                }
+                Trace.WriteLine(Environment.NewLine);
+            }
+
+        }
 
         public void addColumnLeft(int currentColumn)
         {
@@ -168,6 +223,7 @@ namespace Turing
             }
         }
 
+        #endregion
 
         #endregion
 
