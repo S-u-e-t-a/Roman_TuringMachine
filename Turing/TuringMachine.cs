@@ -130,12 +130,13 @@ namespace Turing
             q = instruction.Condition;
         }
 
-        public void Calc()
+        public async void Calc()
         {
             Delay = 100;
 
             while (q != 0)
             {
+                await Task.Delay(5000);
                 makeStep();
             }
 
