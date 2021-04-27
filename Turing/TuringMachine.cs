@@ -13,14 +13,61 @@ using System.Threading.Tasks;
 
 namespace Turing
 {
+
+    class TuringMachineEventArgs
+    {
+        // Сообщение
+        public string Message { get; }
+
+        public TuringMachineEventArgs(string mes)
+        {
+            Message = mes;
+        }
+    }
+
+    class StateChangedEventArgs
+    {
+        // Сообщение
+        public States state { get; }
+
+        public StateChangedEventArgs(States state)
+        {
+            this.state = state;
+        }
+    }
+
+    enum States
+    {
+        working,
+        paused,
+        stopped
+    }
     class TuringMachine : INotifyPropertyChanged
     {
-        private int initialLenOfTape = 200;
-
         public delegate void TuringMachineHandler(object sender, TuringMachineEventArgs e);
         public event TuringMachineHandler Notify;
 
+        public delegate void StateChangedHandler(object sender, StateChangedEventArgs e);
+        public event StateChangedHandler StateChanged;
+
         #region Fields
+        
+        private States currentState;
+        public States CurrentState
+        {
+            get => currentState;
+            set
+            {
+                currentState = value;
+                /*if (currentState == States.stopped)
+                {
+                    q = 1;
+                }*/
+                //StateChanged?.Invoke(this,new StateChangedEventArgs(currentState));
+                OnPropertyChanged();
+            }
+        }
+        private int initialLenOfTape = 200;
         private int q;
         private string alpabet;
         public string Alpabet
@@ -74,10 +121,7 @@ namespace Turing
                     TapeItems[value].IsSelected = true;
                     currentIndex = value;
                 }
-
                 OnPropertyChanged();
-                
-                
             }
         }
 
@@ -121,6 +165,7 @@ namespace Turing
         #endregion
         public TuringMachine()
         {
+            CurrentState = States.stopped;
             q = 1;
             Delay = 100;
             Instructions = new Dictionary<char, ObservableCollection<string>>();
@@ -156,21 +201,28 @@ namespace Turing
                     CurrentIndex++;
                 }
             }
+
+            if (q==0)
+            {
+                q = 1;
+                CurrentState = States.stopped;
+            }
         }
 
 
         public async Task Calc()
-        { 
-
-            while (q != 0)
+        {
+            CurrentState = States.working;
+            while (CurrentState== States.working)
             {
+                if (CurrentState == States.working)
+                {
+                    await Task.Delay(Delay);
 
-                await Task.Delay(Delay);
-
-                makeStep();
+                    makeStep();
+                }
+                
             }
-
-            q = 1;
         }
 
         #endregion
@@ -275,16 +327,7 @@ namespace Turing
     #region Misc
 
 
-    class TuringMachineEventArgs
-    {
-        // Сообщение
-        public string Message { get; }
 
-        public TuringMachineEventArgs(string mes)
-        {
-            Message = mes;
-        }
-    }
 
 
     enum direction

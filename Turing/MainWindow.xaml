@@ -47,10 +47,15 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Command="{Binding StepCommand}"></Button>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Command="{Binding StopCommand}"  Width="50">stop</Button>
+                <Button Command="{Binding PauseCommand}"  Width="50">pause</Button>
+            </StackPanel>
+
+            <Button Command="{Binding StepCommand}">step</Button>
             <Label Grid.Column="2">Скорость</Label>
             <TextBox Text="{Binding Path=Machine.Delay}" Grid.Column="3" />
-            <Button Grid.Column="4" Command="{Binding CalcCommand}"  Content="Сделать магию"/>
+            <Button Grid.Column="4" Command="{Binding CalcCommand}"   Content="Сделать магию"/>
         </Grid>
 
         <Grid Grid.Row="2">

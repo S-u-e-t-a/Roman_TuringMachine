@@ -66,7 +66,9 @@ namespace Turing
 
         #endregion
 
-
+        public bool isPauseButtonEnabled { get; set; }
+        public bool isStopButtonEnabled { get; set; }
+        public bool isStartButtonEnabled { get; set; }
         private TuringMachine machine;
 
         public TuringMachine Machine
@@ -173,7 +175,61 @@ namespace Turing
             }
         }
 
+        /*
+        public bool isPauseButtonEnabled;
+        public bool isStopButtonEnabled;
+        public bool isStartButtonEnabled;
+        public bool IsPauseButtonEnabled
+        {
+            set
+            {
+                if (Machine.CurrentState == States.working)
+                {
+                    isPauseButtonEnabled = true;
+                }
+                else
+                {
+                    isPauseButtonEnabled = false;
+                }
+                OnPropertyChanged();
+            }
+            get => isPauseButtonEnabled;
 
+        }
+
+        public bool IsStopButtonEnabled
+        {
+            set
+            {
+                if (Machine.CurrentState != States.stopped)
+                {
+                    isStopButtonEnabled = true;
+                }
+                else
+                {
+                    isStopButtonEnabled = false;
+                }
+                OnPropertyChanged();
+            }
+            get => isPauseButtonEnabled;
+        }
+
+        public bool IsStartButtonEnabled
+        {
+            set
+            {
+                if (Machine.CurrentState != States.working)
+                {
+                    isStartButtonEnabled = true;
+                }
+                else
+                {
+                    isStartButtonEnabled = false;
+                }
+                OnPropertyChanged();
+            }
+            get => isPauseButtonEnabled;
+        }*/
         #endregion
 
         #region Commands
@@ -269,6 +325,34 @@ namespace Turing
 
         #region InstructionsCommands
 
+        RelayCommand pauseCommand;
+        public RelayCommand PauseCommand
+        {
+            get
+            {
+                return pauseCommand ??
+                       (pauseCommand = new RelayCommand((o) =>
+                       {
+                           Machine.CurrentState = States.paused;
+                           OnPropertyChanged();
+                       }));
+            }
+        }
+
+        RelayCommand stopCommand;
+        public RelayCommand StopCommand
+        {
+            get
+            {
+                return stopCommand ??
+                       (stopCommand = new RelayCommand((o) =>
+                       {
+                           Machine.CurrentState = States.stopped;
+                           OnPropertyChanged();
+                       }));
+            }
+        }
+
         RelayCommand addLeftCommand;
         public RelayCommand AddLeftCommand
         {
@@ -346,6 +430,8 @@ namespace Turing
             #region MachineFilling
 
             Machine = new TuringMachine();
+            //Machine.StateChanged += UpdateButtons;
+            Machine.CurrentState = States.stopped;
             //Machine.CurrentIndex = 9;
             Machine.Alpabet = "01 ";
             Machine.Instructions = new Dictionary<char, ObservableCollection<string>>();
@@ -371,6 +457,30 @@ namespace Turing
             //Machine.TapeItems[10].Color = "#ffff66";
 
             #endregion
+        }
+
+        public void UpdateButtons(object sender, StateChangedEventArgs e)
+        {
+            if (e.state == States.paused)
+            {
+                isStartButtonEnabled = true;
+                isStopButtonEnabled = true;
+                isPauseButtonEnabled = false;
+
+            }
+            else if (e.state == States.working)
+            {
+                isStartButtonEnabled = false;
+                isStopButtonEnabled = true;
+                isPauseButtonEnabled = true;
+            }
+            else if (e.state == States.stopped)
+            {
+                isStartButtonEnabled = true;
+                isStopButtonEnabled = false;
+                isPauseButtonEnabled = false;
+            }
+            
         }
 
         public void DisplayMessage(object sender, TuringMachineEventArgs e)
