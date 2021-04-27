@@ -339,12 +339,14 @@ namespace Turing
 
         #endregion
 
+        #region Methods
+
         public MainWindowVM()
         {
             #region MachineFilling
 
             Machine = new TuringMachine();
-            Machine.CurrentIndex = 9;
+            //Machine.CurrentIndex = 9;
             Machine.Alpabet = "01 ";
             Machine.Instructions = new Dictionary<char, ObservableCollection<string>>();
 
@@ -357,19 +359,28 @@ namespace Turing
             Machine.Instructions[' '][0] = " >2";
             Machine.Instructions[' '][1] = " >0";
 
-            for (int i = 0; i < 100; i++)
+            /*for (int i = 0; i < 100; i++)
             {
-                Machine.TapeItems.Add(new TapeItem() {Color = "#ffffff", Index = i, Letter = ' '});
-            }
+                Machine.TapeItems.Add(new TapeItem(i));
+            }*/
 
             Machine.TapeItems[10].Letter = '1';
             Machine.TapeItems[11].Letter = '0';
             Machine.TapeItems[12].Letter = '1';
-            Machine.CurrentIndex = 9;
+            //Machine.CurrentIndex = 9;
             //Machine.TapeItems[10].Color = "#ffff66";
 
             #endregion
         }
+
+        public void DisplayMessage(object sender, TuringMachineEventArgs e)
+        {
+            MessageBox.Show(e.Message);
+        }
+
+        #endregion
+
+
 
         #region PropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;

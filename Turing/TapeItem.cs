@@ -8,17 +8,43 @@ using System.Threading.Tasks;
 
 namespace Turing
 {
+
     public class TapeItem : INotifyPropertyChanged
     {
+
+        public TapeItem(int index, char sym =' ')
+        {
+            this.index = index;
+            this.Letter = sym;
+        }
+
+        private bool isSelected;
+
+        public bool IsSelected
+        {
+            set
+            {
+                if (value)
+                    Color = "#ffff66"; // желтый
+                else
+                    Color = "#ffffff"; // белый
+                isSelected = value;
+                OnPropertyChanged();
+            }
+            get => isSelected;
+        }
+
         private string color;
         public string Color
         {
-            get => color;
-            set
+            private set
             {
                 color = value;
                 OnPropertyChanged();
             }
+            
+            get => color;
+
         }
 
         private char letter;

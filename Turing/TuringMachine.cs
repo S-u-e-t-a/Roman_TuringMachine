@@ -15,6 +15,10 @@ namespace Turing
 {
     class TuringMachine : INotifyPropertyChanged
     {
+        private int initialLenOfTape = 200;
+
+        /*public delegate void TuringMachineHandler(object sender, TuringMachineEventArgs e);
+        public event TuringMachineHandler Notify;*/
 
         #region Fields
         private int q;
@@ -44,14 +48,31 @@ namespace Turing
             get => currentIndex;
             set
             {
-                try { TapeItems[CurrentIndex].Color = "#ffffff"; }
-                catch { }
 
-                currentIndex = value;
-                try { TapeItems[currentIndex].Color = "#ffff66"; }
-                catch { }
+                if (value == -1)
+                {
+                    TapeItems.Insert(0, new TapeItem(TapeItems[0].Index-1));
+                    TapeItems[1].IsSelected = false;
+                    TapeItems[0].IsSelected = true;
+                    currentIndex = 0;
+                }
+                else if (value == TapeItems.Count)
+                {
+                    TapeItems.Add(new TapeItem(TapeItems.Count));
+                    TapeItems[TapeItems.Count-2].IsSelected = false;
+                    TapeItems[TapeItems.Count - 1].IsSelected = true;
+                    currentIndex = value;
+                }
+                else
+                {
+                    TapeItems[currentIndex].IsSelected = false;
+                    TapeItems[value].IsSelected = true;
+                    currentIndex = value;
+                }
 
                 OnPropertyChanged();
+                
+                
             }
         }
 
@@ -84,8 +105,8 @@ namespace Turing
 
 
 
-        private List<TapeItem> tapeItems;
-        public List<TapeItem> TapeItems
+        private ObservableCollection<TapeItem> tapeItems;
+        public ObservableCollection<TapeItem> TapeItems
         {
             get => tapeItems;
             set
@@ -102,8 +123,14 @@ namespace Turing
         public TuringMachine()
         {
             q = 1;
+            Delay = 100;
             Instructions = new Dictionary<char, ObservableCollection<string>>();
-            TapeItems = new List<TapeItem>();
+            TapeItems = new ObservableCollection<TapeItem>();
+            for (int i = 0; i < initialLenOfTape; i++)
+            {
+                TapeItems.Add(new TapeItem(i));
+            }
+            CurrentIndex = 0;
         }
 
         #region Methods
@@ -130,12 +157,13 @@ namespace Turing
             q = instruction.Condition;
         }
 
-        public void Calc()
+        public async Task Calc()
         {
-            Delay = 100;
+            //Delay = 100;
 
             while (q != 0)
             {
+                await Task.Delay(Delay);
                 makeStep();
             }
 
@@ -242,6 +270,19 @@ namespace Turing
     }
 
     #region Misc
+
+
+    class TuringMachineEventArgs
+    {
+        // Сообщение
+        public string Message { get; }
+
+        public TuringMachineEventArgs(string mes)
+        {
+            Message = mes;
+        }
+    }
+
 
     enum direction
     {
