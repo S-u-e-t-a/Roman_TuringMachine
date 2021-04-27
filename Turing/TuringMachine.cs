@@ -17,8 +17,8 @@ namespace Turing
     {
         private int initialLenOfTape = 200;
 
-        /*public delegate void TuringMachineHandler(object sender, TuringMachineEventArgs e);
-        public event TuringMachineHandler Notify;*/
+        public delegate void TuringMachineHandler(object sender, TuringMachineEventArgs e);
+        public event TuringMachineHandler Notify;
 
         #region Fields
         private int q;
@@ -28,7 +28,12 @@ namespace Turing
             get => alpabet;
             set
             {
-                alpabet = value;
+                SortedSet<char> symbols = new SortedSet<char>(value.ToCharArray());
+                if (!symbols.Contains(' '))
+                {
+                    symbols.Add(' ');
+                }
+                alpabet = new string(symbols.ToArray());
                 OnPropertyChanged();
             }
         }
@@ -76,10 +81,6 @@ namespace Turing
             }
         }
 
-       /* private int previosIndex
-        {
-            get => previosIndex;
-        }*/
         private int delay;
         public int Delay
         {
@@ -117,8 +118,6 @@ namespace Turing
         }
 
 
-
-
         #endregion
         public TuringMachine()
         {
@@ -145,25 +144,29 @@ namespace Turing
 
 
             TapeItems[CurrentIndex].Letter = instruction.Sym;
-            if (instruction.Direction == direction.left)
-            {
-                CurrentIndex--;
-            }
-            else
-            {
-                CurrentIndex++;
-            }
-
             q = instruction.Condition;
+            if (q != 0)
+            {
+                if (instruction.Direction == direction.left)
+                {
+                    CurrentIndex--;
+                }
+                else
+                {
+                    CurrentIndex++;
+                }
+            }
         }
 
+
         public async Task Calc()
-        {
-            //Delay = 100;
+        { 
 
             while (q != 0)
             {
+
                 await Task.Delay(Delay);
+
                 makeStep();
             }
 
@@ -176,11 +179,11 @@ namespace Turing
 
         public void regenerate()
         {
-            Trace.WriteLine(Alpabet);
+            //Trace.WriteLine(Alpabet);
             var newKeys = Alpabet.ToCharArray();
             int lenOfLists = Instructions.ElementAt(0).Value.Count;
             var oldKeys = Instructions.Keys.ToArray();
-            Trace.WriteLine("Old---------------------");
+            /*Trace.WriteLine("Old---------------------");
             foreach (var VARIABLE in Instructions)
             {
                 Trace.Write(VARIABLE.Key + " ");
@@ -189,7 +192,7 @@ namespace Turing
                     Trace.Write(ls + " ");
                 }
                 Trace.WriteLine(Environment.NewLine);
-            }
+            }*/
 
             foreach (var key in newKeys)
             {
@@ -210,7 +213,7 @@ namespace Turing
                     Instructions.Remove(oldKeys[i]);
                 }
             }
-            Trace.WriteLine("New---------------------");
+            /*Trace.WriteLine("New---------------------");
             foreach (var VARIABLE in Instructions)
             {
                 Trace.Write(VARIABLE.Key + " ");
@@ -219,7 +222,7 @@ namespace Turing
                     Trace.Write(ls + " ");
                 }
                 Trace.WriteLine(Environment.NewLine);
-            }
+            }*/
 
         }
 

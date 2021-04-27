@@ -12,7 +12,7 @@ namespace Turing
     public class TapeItem : INotifyPropertyChanged
     {
 
-        public TapeItem(int index, char sym =' ')
+        public TapeItem(int index, char sym=' ')
         {
             this.index = index;
             this.Letter = sym;
