@@ -131,5 +131,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Icons\addLeft.png" />
+    <Resource Include="Resources\Icons\addRight.png" />
+    <Resource Include="Resources\Icons\del.png" />
+    <Resource Include="Resources\Icons\newFile.png" />
+    <Resource Include="Resources\Icons\openFolder.png" />
+    <Resource Include="Resources\Icons\openTape.png" />
+    <Resource Include="Resources\Icons\pause.png" />
+    <Resource Include="Resources\Icons\play.png" />
+    <Resource Include="Resources\Icons\save.png" />
+    <Resource Include="Resources\Icons\saveTape.png" />
+    <Resource Include="Resources\Icons\step.png" />
+    <Resource Include="Resources\Icons\stop.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

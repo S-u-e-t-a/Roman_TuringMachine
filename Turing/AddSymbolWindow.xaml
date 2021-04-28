@@ -18,6 +18,7 @@
         
         >
     <Grid>
+
         <DataGrid x:Name="symbols"
                   dataGrid2D:ItemsSource.RowsSource="{Binding SymbolList}"
                   Height="{Binding GridHeight, Mode=TwoWay}"

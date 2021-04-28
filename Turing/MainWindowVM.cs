@@ -66,9 +66,44 @@ namespace Turing
 
         #endregion
 
-        public bool isPauseButtonEnabled { get; set; }
-        public bool isStopButtonEnabled { get; set; }
-        public bool isStartButtonEnabled { get; set; }
+
+        private bool isPauseButtonEnabled;
+        private bool isStopButtonEnabled;
+        private bool isStartButtonEnabled;
+
+
+
+
+        public bool IsPauseButtonEnabled
+        {
+            get => isPauseButtonEnabled;
+            set
+            {
+                isPauseButtonEnabled = value;
+                OnPropertyChanged();
+            }
+            
+        }
+        public bool IsStopButtonEnabled
+        {
+            get => isStopButtonEnabled;
+            set
+            {
+                isStopButtonEnabled = value;
+                OnPropertyChanged();
+            }
+
+        }
+        public bool IsStartButtonEnabled
+        {
+            get => isStartButtonEnabled;
+            set
+            {
+                isStartButtonEnabled = value;
+                OnPropertyChanged();
+            }
+
+        }
         private TuringMachine machine;
 
         public TuringMachine Machine
@@ -259,9 +294,7 @@ namespace Turing
                 return stepCommand ??
                        (stepCommand = new RelayCommand((o) =>
                        {
-                           //Machine.CurrentIndex = 99;
                            Machine.makeStep();
-                           //Machine.CurrentIndex = 99;
                        }));
             }
         }
@@ -430,8 +463,10 @@ namespace Turing
             #region MachineFilling
 
             Machine = new TuringMachine();
-            //Machine.StateChanged += UpdateButtons;
+            Machine.StateChanged += UpdateButtons;
+            Machine.InstructionIsNull += onNullInstruction;
             Machine.CurrentState = States.stopped;
+
             //Machine.CurrentIndex = 9;
             Machine.Alpabet = "01 ";
             Machine.Instructions = new Dictionary<char, ObservableCollection<string>>();
@@ -453,6 +488,12 @@ namespace Turing
             Machine.TapeItems[10].Letter = '1';
             Machine.TapeItems[11].Letter = '0';
             Machine.TapeItems[12].Letter = '1';
+            Machine.TapeItems[13].Letter = '1';
+            Machine.TapeItems[14].Letter = '0';
+            Machine.TapeItems[15].Letter = '1';
+            Machine.TapeItems[16].Letter = '1';
+            Machine.TapeItems[17].Letter = '0';
+            Machine.TapeItems[18].Letter = '1';
             //Machine.CurrentIndex = 9;
             //Machine.TapeItems[10].Color = "#ffff66";
 
@@ -463,24 +504,29 @@ namespace Turing
         {
             if (e.state == States.paused)
             {
-                isStartButtonEnabled = true;
-                isStopButtonEnabled = true;
-                isPauseButtonEnabled = false;
+                IsStartButtonEnabled = true;
+                IsStopButtonEnabled = true;
+                IsPauseButtonEnabled = false;
 
             }
             else if (e.state == States.working)
             {
-                isStartButtonEnabled = false;
-                isStopButtonEnabled = true;
-                isPauseButtonEnabled = true;
+                IsStartButtonEnabled = false;
+                IsStopButtonEnabled = true;
+                IsPauseButtonEnabled = true;
             }
             else if (e.state == States.stopped)
             {
-                isStartButtonEnabled = true;
-                isStopButtonEnabled = false;
-                isPauseButtonEnabled = false;
+                IsStartButtonEnabled = true;
+                IsStopButtonEnabled = false;
+                IsPauseButtonEnabled = false;
             }
             
+        }
+
+        public void onNullInstruction(object sender, InstructionIsNullEventArgs e)
+        {
+            MessageBox.Show($"Нет команды в ячейке ({e.sym},Q{e.q}.","Ошибка", MessageBoxButton.OK);
         }
 
         public void DisplayMessage(object sender, TuringMachineEventArgs e)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -36,6 +37,18 @@ namespace Turing
         }
     }
 
+    class InstructionIsNullEventArgs
+    {
+        // Сообщение
+        public char sym;
+        public int q;
+
+        public InstructionIsNullEventArgs(char sym, int q)
+        {
+            this.sym = sym;
+            this.q = q;
+        }
+    }
     enum States
     {
         working,
@@ -50,8 +63,11 @@ namespace Turing
         public delegate void StateChangedHandler(object sender, StateChangedEventArgs e);
         public event StateChangedHandler StateChanged;
 
+        public delegate void InstructionIsNullHandler(object sender, InstructionIsNullEventArgs e);
+        public event InstructionIsNullHandler InstructionIsNull;
+
         #region Fields
-        
+
         private States currentState;
         public States CurrentState
         {
@@ -59,11 +75,11 @@ namespace Turing
             set
             {
                 currentState = value;
-                /*if (currentState == States.stopped)
+                if (currentState == States.stopped)
                 {
                     q = 1;
-                }*/
-                //StateChanged?.Invoke(this,new StateChangedEventArgs(currentState));
+                }
+                StateChanged?.Invoke(this,new StateChangedEventArgs(currentState));
                 OnPropertyChanged();
             }
         }
@@ -136,8 +152,9 @@ namespace Turing
             }
         }
 
-        private Dictionary<char, ObservableCollection<string>> instructions;
+        public int CountOfQ => Instructions.ElementAt(0).Value.Count;
 
+        private Dictionary<char, ObservableCollection<string>> instructions;
         public Dictionary<char, ObservableCollection<string>> Instructions
         {
             get => instructions;
@@ -147,8 +164,6 @@ namespace Turing
                 OnPropertyChanged();
             }
         }
-
-
 
         private ObservableCollection<TapeItem> tapeItems;
         public ObservableCollection<TapeItem> TapeItems
@@ -184,28 +199,41 @@ namespace Turing
 
         public void makeStep()
         {
-            var currentState = TapeItems[CurrentIndex];
-            var instruction = new Comm(Instructions[currentState.Letter][q - 1]);
-
-
-            TapeItems[CurrentIndex].Letter = instruction.Sym;
-            q = instruction.Condition;
-            if (q != 0)
+            var currentTapeItem = TapeItems[CurrentIndex];
+            string strInstruction = Instructions[currentTapeItem.Letter][q - 1];
+            string strQ= String.Empty;
+            for (int i = 0; i < CountOfQ-1; i++)
             {
-                if (instruction.Direction == direction.left)
-                {
-                    CurrentIndex--;
-                }
-                else
-                {
-                    CurrentIndex++;
-                }
+                strQ += i.ToString();
             }
-
-            if (q==0)
+            Regex commRegex = new Regex($"^[{Alpabet}][<>][{strQ}]$");
+            if (strInstruction==null || !commRegex.IsMatch(strInstruction))
             {
-                q = 1;
+                InstructionIsNull.Invoke(this, new InstructionIsNullEventArgs(currentTapeItem.Letter, q));
                 CurrentState = States.stopped;
+            }
+            else
+            {
+                var instruction = new Comm(strInstruction);
+                TapeItems[CurrentIndex].Letter = instruction.Sym;
+                q = instruction.Condition;
+                if (q != 0)
+                {
+                    if (instruction.Direction == direction.left)
+                    {
+                        CurrentIndex--;
+                    }
+                    else
+                    {
+                        CurrentIndex++;
+                    }
+                }
+
+                if (q == 0)
+                {
+                    q = 1;
+                    CurrentState = States.stopped;
+                }
             }
         }
 
@@ -217,9 +245,8 @@ namespace Turing
             {
                 if (CurrentState == States.working)
                 {
-                    await Task.Delay(Delay);
-
                     makeStep();
+                    await Task.Delay(Delay);
                 }
                 
             }
@@ -341,6 +368,8 @@ namespace Turing
         private char sym;
         private direction direction; // 0-left 1-right
         private int condition;
+
+        
 
         public char Sym
         {
