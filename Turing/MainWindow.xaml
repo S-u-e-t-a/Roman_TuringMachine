@@ -13,6 +13,37 @@
         Left="{Binding Path=Left, Mode=TwoWay}"
         Closing="DataWindow_Closing">
     <Window.Resources>
+        <Style TargetType="{x:Type Button}" x:Key="DefaultButton">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightBlue"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="False">
+                    <Setter Property="Background" Value="#00DDDDDD"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="LightSlateGray"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="Silver"/>
+                </Trigger>
+            </Style.Triggers>
+
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="Foreground" Value="MidnightBlue" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate x:Name="tmpltButton">
+                        <Grid Background="{TemplateBinding Background}">
+                            
+                            <ContentPresenter x:Name="ButtonContent" Content="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}" 
+                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Image x:Key="openFolder" Source="Resources/Icons/openFolder.png" />
         <Image x:Key="addLeft" Source="Resources/Icons/addLeft.png" />
         <Image x:Key="addRight" Source="Resources/Icons/addRight.png" />
@@ -34,7 +65,7 @@
         </i:Interaction.Behaviors>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="150" />
             <RowDefinition Height="3" />
             <RowDefinition Height="10*" />
@@ -54,22 +85,21 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <StackPanel Orientation="Horizontal">
-                <Button Content="{StaticResource newFile}" BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Новая программа"/>
-                <Button Content="{StaticResource openFolder}" BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Загрузить программу"/>
-                <Button Content="{StaticResource save}" BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Сохранить программу"/>
-                <Button Content="{StaticResource saveTape}" BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Сохранить ленту" />
-                <Button Content="{StaticResource openTape}" BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Восстановить ленту" />
+                <Button Content="{StaticResource newFile}" Style="{StaticResource DefaultButton}" ToolTip="Новая программа"/>
+                <Button Content="{StaticResource openFolder}"  Style="{StaticResource DefaultButton}" ToolTip="Загрузить программу"/>
+                <Button Content="{StaticResource save}"  Style="{StaticResource DefaultButton}" ToolTip="Сохранить программу"/>
+                <Button Content="{StaticResource saveTape}"  Style="{StaticResource DefaultButton}" ToolTip="Сохранить ленту" />
+                <Button Content="{StaticResource openTape}"  Style="{StaticResource DefaultButton}" ToolTip="Восстановить ленту" />
             </StackPanel>
             <Rectangle Width="20" />
             <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding CalcCommand}" IsEnabled="{Binding IsStartButtonEnabled}"
-                        Content="{StaticResource play}" BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Запуск программы"/>
+                        Content="{StaticResource play}"  Style="{StaticResource DefaultButton}" ToolTip="Запуск программы"/>
                 <Button Command="{Binding StopCommand}" IsEnabled="{Binding IsStopButtonEnabled}"
-                        Content="{StaticResource stop}" BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Остановить программу" />
+                        Content="{StaticResource stop}"  Style="{StaticResource DefaultButton}" ToolTip="Остановить программу" />
                 <Button Command="{Binding PauseCommand}" IsEnabled="{Binding IsPauseButtonEnabled}"
-                        Content="{StaticResource pause}" Background="#00DDDDDD" BorderBrush="#00DDDDDD" ToolTip="Пауза" />
-                <Button Command="{Binding StepCommand}" Content="{StaticResource step}" BorderBrush="#00DDDDDD"
-                        Background="#00DDDDDD" ToolTip="Выполнить шаг"/>
+                        Content="{StaticResource pause}"  Style="{StaticResource DefaultButton}" ToolTip="Пауза" />
+                <Button Command="{Binding StepCommand}" Content="{StaticResource step}"  Style="{StaticResource DefaultButton}" ToolTip="Выполнить шаг"/>
                 <Label>Скорость</Label>
                 <TextBox Text="{Binding Path=Machine.Delay}" />
 
@@ -193,10 +223,10 @@
                     </Grid>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Button Command="{Binding AddLeftCommand}" Content="{StaticResource addLeft}"
-                                BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Вставить столбец слева"/>
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец слева"/>
                         <Button Command="{Binding AddRightCommand}" Content="{StaticResource addRight}"
-                                BorderBrush="#00DDDDDD" Background="#00DDDDDD" ToolTip="Вставить столбец справа"/>
-                        <Button Command="{Binding DelColumnCommand}" BorderBrush="#00DDDDDD" Background="#00DDDDDD"
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец справа"/>
+                        <Button Command="{Binding DelColumnCommand}" Style="{StaticResource DefaultButton}"
                                 Content="{StaticResource delColumn}" ToolTip="Удалить столбец" />
                     </StackPanel>
 
