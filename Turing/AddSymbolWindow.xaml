@@ -8,15 +8,12 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="Выберите символ для ячейки ленты" 
-        
+        Title="Выберите символ для ячейки ленты"
+
         WindowStyle="ToolWindow"
         d:DataContext="{d:DesignInstance local:AddSymbolVM}"
         Height="{Binding WindowHeight, Mode=TwoWay}"
-        Width="{Binding WindowWidth, Mode=TwoWay}" 
-
-        
-        >
+        Width="{Binding WindowWidth, Mode=TwoWay}">
     <Grid>
 
         <DataGrid x:Name="symbols"
@@ -25,16 +22,16 @@
                   Width="{Binding GridWidth, Mode=TwoWay}"
                   dataGrid2D:Selected.CellItem="{Binding SelectedItem}"
                   IsReadOnly="True"
-                  HeadersVisibility="None" 
+                  HeadersVisibility="None"
                   CanUserResizeColumns="False"
                   CanUserResizeRows="False"
                   ColumnWidth="SizeToCells"
-                  
+
                   SelectionMode="Single" SelectionUnit="Cell">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="SelectedCellsChanged">
                     <i:InvokeCommandAction
-                        Command="{Binding CellSelectedCommand}"/>
+                        Command="{Binding CellSelectedCommand}" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
 

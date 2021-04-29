@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Turing
 {
-
     public class TapeItem : INotifyPropertyChanged
     {
-
-        public TapeItem(int index, char sym=' ')
-        {
-            this.index = index;
-            this.Letter = sym;
-        }
+        private string color;
+        private int index;
 
         private bool isSelected;
+
+        private char letter;
+
+        public TapeItem(int index, char sym = ' ')
+        {
+            this.index = index;
+            Letter = sym;
+        }
 
         public bool IsSelected
         {
@@ -34,7 +32,6 @@ namespace Turing
             get => isSelected;
         }
 
-        private string color;
         public string Color
         {
             private set
@@ -42,12 +39,10 @@ namespace Turing
                 color = value;
                 OnPropertyChanged();
             }
-            
-            get => color;
 
+            get => color;
         }
 
-        private char letter;
         public char Letter
         {
             get => letter;
@@ -57,7 +52,7 @@ namespace Turing
                 OnPropertyChanged();
             }
         }
-        private int index;
+
         public int Index
         {
             get => index;
@@ -67,6 +62,7 @@ namespace Turing
                 OnPropertyChanged();
             }
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public void OnPropertyChanged([CallerMemberName] string prop = "")

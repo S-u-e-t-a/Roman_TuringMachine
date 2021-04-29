@@ -16,16 +16,16 @@
         <Style TargetType="{x:Type Button}" x:Key="DefaultButton">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="LightBlue"/>
+                    <Setter Property="Background" Value="LightBlue" />
                 </Trigger>
                 <Trigger Property="IsMouseOver" Value="False">
-                    <Setter Property="Background" Value="#00DDDDDD"/>
+                    <Setter Property="Background" Value="#00DDDDDD" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="LightSlateGray"/>
+                    <Setter Property="Background" Value="LightSlateGray" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="Silver"/>
+                    <Setter Property="Background" Value="Silver" />
                 </Trigger>
             </Style.Triggers>
 
@@ -35,9 +35,10 @@
                 <Setter.Value>
                     <ControlTemplate x:Name="tmpltButton">
                         <Grid Background="{TemplateBinding Background}">
-                            
-                            <ContentPresenter x:Name="ButtonContent" Content="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}" 
-                                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+                            <ContentPresenter x:Name="ButtonContent"
+                                              Content="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}"
+                                              HorizontalAlignment="Center" VerticalAlignment="Center" />
 
                         </Grid>
                     </ControlTemplate>
@@ -85,21 +86,29 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <StackPanel Orientation="Horizontal">
-                <Button Content="{StaticResource newFile}" Style="{StaticResource DefaultButton}" ToolTip="Новая программа"/>
-                <Button Content="{StaticResource openFolder}"  Style="{StaticResource DefaultButton}" ToolTip="Загрузить программу"/>
-                <Button Content="{StaticResource save}"  Style="{StaticResource DefaultButton}" ToolTip="Сохранить программу"/>
-                <Button Content="{StaticResource saveTape}"  Style="{StaticResource DefaultButton}" ToolTip="Сохранить ленту" />
-                <Button Content="{StaticResource openTape}"  Style="{StaticResource DefaultButton}" ToolTip="Восстановить ленту" />
+                <Button Content="{StaticResource newFile}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Новая программа" />
+                <Button Content="{StaticResource openFolder}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Загрузить программу" />
+                <Button Content="{StaticResource save}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Сохранить программу" />
+                <Button Content="{StaticResource saveTape}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Сохранить ленту" />
+                <Button Content="{StaticResource openTape}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Восстановить ленту" />
             </StackPanel>
             <Rectangle Width="20" />
             <StackPanel Orientation="Horizontal">
                 <Button Command="{Binding CalcCommand}" IsEnabled="{Binding IsStartButtonEnabled}"
-                        Content="{StaticResource play}"  Style="{StaticResource DefaultButton}" ToolTip="Запуск программы"/>
+                        Content="{StaticResource play}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Запуск программы" />
                 <Button Command="{Binding StopCommand}" IsEnabled="{Binding IsStopButtonEnabled}"
-                        Content="{StaticResource stop}"  Style="{StaticResource DefaultButton}" ToolTip="Остановить программу" />
+                        Content="{StaticResource stop}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Остановить программу" />
                 <Button Command="{Binding PauseCommand}" IsEnabled="{Binding IsPauseButtonEnabled}"
-                        Content="{StaticResource pause}"  Style="{StaticResource DefaultButton}" ToolTip="Пауза" />
-                <Button Command="{Binding StepCommand}" Content="{StaticResource step}"  Style="{StaticResource DefaultButton}" ToolTip="Выполнить шаг"/>
+                        Content="{StaticResource pause}" Style="{StaticResource DefaultButton}" ToolTip="Пауза" />
+                <Button Command="{Binding StepCommand}" Content="{StaticResource step}"
+                        Style="{StaticResource DefaultButton}" ToolTip="Выполнить шаг" />
                 <Label>Скорость</Label>
                 <TextBox Text="{Binding Path=Machine.Delay}" />
 
@@ -134,7 +143,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="20" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Command="{Binding MoveLeftCommand}" Content="&lt;" ToolTip="К предыдущей ячейке" />
+                <Button Grid.Column="0" Command="{Binding MoveLeftCommand}" Content="&lt;"
+                        ToolTip="К предыдущей ячейке" />
                 <DataGrid Grid.Column="1"
                           ColumnWidth="30"
                           IsReadOnly="True"
@@ -197,7 +207,8 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                 </DataGrid>
-                <Button Grid.Column="2" Command="{Binding MoveRightCommand}" ToolTip="К следующей ячейке" Content="&gt;" />
+                <Button Grid.Column="2" Command="{Binding MoveRightCommand}" ToolTip="К следующей ячейке"
+                        Content="&gt;" />
             </Grid>
 
             <Grid Grid.Row="1">
@@ -223,9 +234,9 @@
                     </Grid>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Button Command="{Binding AddLeftCommand}" Content="{StaticResource addLeft}"
-                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец слева"/>
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец слева" />
                         <Button Command="{Binding AddRightCommand}" Content="{StaticResource addRight}"
-                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец справа"/>
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец справа" />
                         <Button Command="{Binding DelColumnCommand}" Style="{StaticResource DefaultButton}"
                                 Content="{StaticResource delColumn}" ToolTip="Удалить столбец" />
                     </StackPanel>

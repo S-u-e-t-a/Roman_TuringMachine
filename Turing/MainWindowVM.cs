@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
 using Gu.Wpf.DataGrid2D;
 
 namespace Turing
 {
-    class MainWindowVM : INotifyPropertyChanged
+    internal class MainWindowVM : INotifyPropertyChanged
     {
         #region Fields
+
         #region FieldsForMouse
+
         private double top;
         private double left;
+
         public double Top
         {
-            get { return top; }
+            get => top;
             set
             {
                 top = value;
@@ -33,7 +29,7 @@ namespace Turing
 
         public double Left
         {
-            get { return left; }
+            get => left;
             set
             {
                 left = value;
@@ -46,7 +42,7 @@ namespace Turing
 
         public double PanelX
         {
-            get { return _panelX; }
+            get => _panelX;
             set
             {
                 _panelX = value;
@@ -56,7 +52,7 @@ namespace Turing
 
         public double PanelY
         {
-            get { return _panelY; }
+            get => _panelY;
             set
             {
                 _panelY = value;
@@ -72,8 +68,6 @@ namespace Turing
         private bool isStartButtonEnabled;
 
 
-
-
         public bool IsPauseButtonEnabled
         {
             get => isPauseButtonEnabled;
@@ -82,8 +76,8 @@ namespace Turing
                 isPauseButtonEnabled = value;
                 OnPropertyChanged();
             }
-            
         }
+
         public bool IsStopButtonEnabled
         {
             get => isStopButtonEnabled;
@@ -92,8 +86,8 @@ namespace Turing
                 isStopButtonEnabled = value;
                 OnPropertyChanged();
             }
-
         }
+
         public bool IsStartButtonEnabled
         {
             get => isStartButtonEnabled;
@@ -102,8 +96,8 @@ namespace Turing
                 isStartButtonEnabled = value;
                 OnPropertyChanged();
             }
-
         }
+
         private TuringMachine machine;
 
         public TuringMachine Machine
@@ -121,92 +115,95 @@ namespace Turing
         {
             get
             {
-                int lenofinstrutions = Machine.Instructions[Machine.Instructions.ElementAt(0).Key].Count; // ультра говнокод (получаем количество элементов в массиве)
+                int lenofinstrutions = Machine.Instructions.ElementAt(0).Value.Count; // ультра говнокод (получаем количество элементов в массиве)
                 List<string> headers = new List<string>();
                 for (int i = 0; i < lenofinstrutions; i++)
                 {
                     headers.Add($"Q{i + 1}");
                 }
+
                 return headers;
             }
         }
+
         public List<string> RowHeaders
         {
-            get
-            {
-                return Machine.Instructions.Keys.ToList().Select(n => n.ToString()).ToList();
-            }
+            get { return Machine.Instructions.Keys.ToList().Select(n => n.ToString()).ToList(); }
         }
 
 
         private object selectedItem;
+
         public object SelectedItem
         {
-            get => this.selectedItem;
+            get => selectedItem;
 
             set
             {
-                if (Equals(value, this.selectedItem))
+                if (Equals(value, selectedItem))
                 {
                     return;
                 }
 
-                this.selectedItem = value;
-                this.OnPropertyChanged();
+                selectedItem = value;
+                OnPropertyChanged();
             }
         }
 
 
         private int selectedIndex;
+
         public int SelectedIndex
         {
-            get => this.selectedIndex;
+            get => selectedIndex;
 
             set
             {
-                if (Equals(value, this.selectedIndex))
+                if (Equals(value, selectedIndex))
                 {
                     return;
                 }
 
-                this.selectedIndex = value;
-                this.OnPropertyChanged();
+                selectedIndex = value;
+                OnPropertyChanged();
             }
         }
 
-       
+
         private RowColumnIndex selectedIndexIns;
+
         public RowColumnIndex SelectedIndexIns
         {
-            get => this.selectedIndexIns;
+            get => selectedIndexIns;
 
             set
             {
-                if (Equals(value, this.selectedIndexIns))
+                if (Equals(value, selectedIndexIns))
                 {
                     return;
                 }
 
-                this.selectedIndexIns = value;
-                this.OnPropertyChanged();
+                selectedIndexIns = value;
+                OnPropertyChanged();
             }
         }
 
 
         private TapeItem selectedTapeItem;
+
         public TapeItem SelectedTapeItem
         {
-            get => this.selectedTapeItem;
+            get => selectedTapeItem;
 
             set
             {
-                if (Equals(value, this.selectedTapeItem))
+                if (Equals(value, selectedTapeItem))
                 {
                     return;
                 }
 
-                this.selectedTapeItem = value;
-                this.OnPropertyChanged();
+                selectedTapeItem = value;
+                OnPropertyChanged();
             }
         }
 
@@ -265,19 +262,21 @@ namespace Turing
             }
             get => isPauseButtonEnabled;
         }*/
+
         #endregion
 
         #region Commands
 
         #region ClaculationsCommands
 
-        RelayCommand calcCommand;
+        private RelayCommand calcCommand;
+
         public RelayCommand CalcCommand
         {
             get
             {
                 return calcCommand ??
-                       (calcCommand = new RelayCommand((o) =>
+                       (calcCommand = new RelayCommand(o =>
                        {
                            //Machine.CurrentIndex = 99;
                            Machine.Calc();
@@ -286,16 +285,14 @@ namespace Turing
             }
         }
 
-        RelayCommand stepCommand;
+        private RelayCommand stepCommand;
+
         public RelayCommand StepCommand
         {
             get
             {
                 return stepCommand ??
-                       (stepCommand = new RelayCommand((o) =>
-                       {
-                           Machine.makeStep();
-                       }));
+                       (stepCommand = new RelayCommand(o => { Machine.makeStep(); }));
             }
         }
 
@@ -303,40 +300,37 @@ namespace Turing
 
         #region TapeCommands
 
-        RelayCommand moveLeftCommand;
+        private RelayCommand moveLeftCommand;
+
         public RelayCommand MoveLeftCommand
         {
             get
             {
                 return moveLeftCommand ??
-                       (moveLeftCommand = new RelayCommand((o) =>
-                       {
-                           Machine.CurrentIndex -= 1;
-                       }));
+                       (moveLeftCommand = new RelayCommand(o => { Machine.CurrentIndex -= 1; }));
             }
         }
 
-        RelayCommand moveRightCommand;
+        private RelayCommand moveRightCommand;
+
         public RelayCommand MoveRightCommand
         {
             get
             {
                 return moveRightCommand ??
-                       (moveRightCommand = new RelayCommand((o) =>
-                       {
-                           Machine.CurrentIndex += 1;
-                       }));
+                       (moveRightCommand = new RelayCommand(o => { Machine.CurrentIndex += 1; }));
             }
         }
 
 
-        RelayCommand cellSelectedCommand;
+        private RelayCommand cellSelectedCommand;
+
         public RelayCommand CellSelectedCommand
         {
             get
             {
                 return cellSelectedCommand ??
-                       (cellSelectedCommand = new RelayCommand((o) =>
+                       (cellSelectedCommand = new RelayCommand(o =>
                        {
                            if (SelectedIndex != -1)
                            {
@@ -349,7 +343,6 @@ namespace Turing
                                SelectedTapeItem.Letter = (window.DataContext as AddSymbolVM).SelectedItem;
                                SelectedIndex = -1;
                            }
-
                        }));
             }
         }
@@ -358,13 +351,14 @@ namespace Turing
 
         #region InstructionsCommands
 
-        RelayCommand pauseCommand;
+        private RelayCommand pauseCommand;
+
         public RelayCommand PauseCommand
         {
             get
             {
                 return pauseCommand ??
-                       (pauseCommand = new RelayCommand((o) =>
+                       (pauseCommand = new RelayCommand(o =>
                        {
                            Machine.CurrentState = States.paused;
                            OnPropertyChanged();
@@ -372,13 +366,14 @@ namespace Turing
             }
         }
 
-        RelayCommand stopCommand;
+        private RelayCommand stopCommand;
+
         public RelayCommand StopCommand
         {
             get
             {
                 return stopCommand ??
-                       (stopCommand = new RelayCommand((o) =>
+                       (stopCommand = new RelayCommand(o =>
                        {
                            Machine.CurrentState = States.stopped;
                            OnPropertyChanged();
@@ -386,13 +381,14 @@ namespace Turing
             }
         }
 
-        RelayCommand addLeftCommand;
+        private RelayCommand addLeftCommand;
+
         public RelayCommand AddLeftCommand
         {
             get
             {
                 return addLeftCommand ??
-                       (addLeftCommand = new RelayCommand((o) =>
+                       (addLeftCommand = new RelayCommand(o =>
                        {
                            Machine.addColumnLeft(SelectedIndexIns.Column);
                            OnPropertyChanged();
@@ -402,13 +398,14 @@ namespace Turing
         }
 
 
-        RelayCommand addRightCommand;
+        private RelayCommand addRightCommand;
+
         public RelayCommand AddRightCommand
         {
             get
             {
                 return addRightCommand ??
-                       (addRightCommand = new RelayCommand((o) =>
+                       (addRightCommand = new RelayCommand(o =>
                        {
                            Machine.addColumnRight(SelectedIndexIns.Column);
                            OnPropertyChanged();
@@ -417,13 +414,14 @@ namespace Turing
             }
         }
 
-        RelayCommand delColumnCommand;
+        private RelayCommand delColumnCommand;
+
         public RelayCommand DelColumnCommand
         {
             get
             {
                 return delColumnCommand ??
-                       (delColumnCommand = new RelayCommand((o) =>
+                       (delColumnCommand = new RelayCommand(o =>
                        {
                            Machine.delColumn(SelectedIndexIns.Column);
                            OnPropertyChanged();
@@ -433,24 +431,24 @@ namespace Turing
         }
 
 
-        RelayCommand regenerateColumns;
+        private RelayCommand regenerateColumns;
+
         public RelayCommand RegenerateColumns
         {
             get
             {
                 return regenerateColumns ??
-                       (regenerateColumns = new RelayCommand((o) =>
+                       (regenerateColumns = new RelayCommand(o =>
                        {
                            Machine.regenerate();
                            //обновляем список (очень криво)
-                           AddLeftCommand.Execute(null); 
+                           AddLeftCommand.Execute(null);
                            DelColumnCommand.Execute(null);
                            // обновляем названия строк
                            OnPropertyChanged("RowHeaders");
                        }));
             }
         }
-
 
         #endregion
 
@@ -471,9 +469,9 @@ namespace Turing
             Machine.Alpabet = "01 ";
             Machine.Instructions = new Dictionary<char, ObservableCollection<string>>();
 
-            Machine.Instructions['0'] = new ObservableCollection<string>() { null, null, null, null };
-            Machine.Instructions['1'] = new ObservableCollection<string>() { null, null, null, null };
-            Machine.Instructions[' '] = new ObservableCollection<string>() { null, null, null, null };
+            Machine.Instructions['0'] = new ObservableCollection<string> {null, null, null, null};
+            Machine.Instructions['1'] = new ObservableCollection<string> {null, null, null, null};
+            Machine.Instructions[' '] = new ObservableCollection<string> {null, null, null, null};
 
             Machine.Instructions['0'][1] = "1>2";
             Machine.Instructions['1'][1] = "0>2";
@@ -507,7 +505,6 @@ namespace Turing
                 IsStartButtonEnabled = true;
                 IsStopButtonEnabled = true;
                 IsPauseButtonEnabled = false;
-
             }
             else if (e.state == States.working)
             {
@@ -521,12 +518,11 @@ namespace Turing
                 IsStopButtonEnabled = false;
                 IsPauseButtonEnabled = false;
             }
-            
         }
 
         public void onNullInstruction(object sender, InstructionIsNullEventArgs e)
         {
-            MessageBox.Show($"Нет команды в ячейке ({e.sym},Q{e.q}.","Ошибка", MessageBoxButton.OK);
+            MessageBox.Show($"Нет команды в ячейке ({e.sym},Q{e.q}.", "Ошибка", MessageBoxButton.OK);
         }
 
         public void DisplayMessage(object sender, TuringMachineEventArgs e)
@@ -537,15 +533,16 @@ namespace Turing
         #endregion
 
 
-
         #region PropertyChanged
+
         public event PropertyChangedEventHandler PropertyChanged;
+
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
-        #endregion
 
+        #endregion
     }
 }
