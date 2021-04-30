@@ -6,22 +6,22 @@ using System.Windows;
 
 namespace Turing
 {
-    internal class AddSymbolVM : INotifyPropertyChanged
+    internal class AddSymbolVm : INotifyPropertyChanged
     {
-        private RelayCommand cellSelectedCommand;
-        private int gridHeight;
+        private RelayCommand _cellSelectedCommand;
+        private int _gridHeight;
 
 
-        private int gridWidth;
+        private int _gridWidth;
 
-        private char selectedItem;
+        private char _selectedItem;
 
 
-        private List<List<string>> symbolList;
-        private int windowHeight;
-        private int windowWidth;
+        private List<List<string>> _symbolList;
+        private int _windowHeight;
+        private int _windowWidth;
 
-        public AddSymbolVM(string alphabet)
+        public AddSymbolVm(string alphabet)
         {
             SymbolList = new List<List<string>> {alphabet.ToCharArray().Select(n => n.ToString()).ToList()};
             int j;
@@ -45,26 +45,26 @@ namespace Turing
 
         public char SelectedItem
         {
-            get => selectedItem;
+            get => _selectedItem;
 
             set
             {
-                if (Equals(value, selectedItem))
+                if (Equals(value, _selectedItem))
                 {
                     return;
                 }
 
-                selectedItem = value;
+                _selectedItem = value;
                 OnPropertyChanged();
             }
         }
 
         public List<List<string>> SymbolList
         {
-            get => symbolList;
+            get => _symbolList;
             set
             {
-                symbolList = value;
+                _symbolList = value;
                 OnPropertyChanged();
             }
         }
@@ -72,40 +72,40 @@ namespace Turing
 
         public int GridWidth
         {
-            get => gridWidth;
+            get => _gridWidth;
             set
             {
-                gridWidth = value;
+                _gridWidth = value;
                 OnPropertyChanged();
             }
         }
 
         public int GridHeight
         {
-            get => gridHeight;
+            get => _gridHeight;
             set
             {
-                gridHeight = value;
+                _gridHeight = value;
                 OnPropertyChanged();
             }
         }
 
         public int WindowWidth
         {
-            get => windowWidth;
+            get => _windowWidth;
             set
             {
-                windowWidth = value;
+                _windowWidth = value;
                 OnPropertyChanged();
             }
         }
 
         public int WindowHeight
         {
-            get => windowHeight;
+            get => _windowHeight;
             set
             {
-                windowHeight = value;
+                _windowHeight = value;
                 OnPropertyChanged();
             }
         }
@@ -115,8 +115,8 @@ namespace Turing
         {
             get
             {
-                return cellSelectedCommand ??
-                       (cellSelectedCommand = new RelayCommand(o =>
+                return _cellSelectedCommand ??
+                       (_cellSelectedCommand = new RelayCommand(o =>
                        {
                            foreach (Window item in Application.Current.Windows)
                            {

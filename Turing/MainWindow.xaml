@@ -8,11 +8,17 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="MainWindow" Height="724.648" Width="800"
-        d:DataContext="{d:DesignInstance local:MainWindowVM}"
+        d:DataContext="{d:DesignInstance local:MainWindowVm}"
         Top="{Binding Path=Top, Mode=TwoWay}"
         Left="{Binding Path=Left, Mode=TwoWay}"
         Closing="DataWindow_Closing">
     <Window.Resources>
+        <DataTemplate x:Key="CommTemplate" DataType="{x:Type local:InstructionsItem}">
+            <TextBox Background="{Binding Path=Color}" Text="{Binding Path=Str, Mode=TwoWay}" />
+        </DataTemplate>
+        <DataTemplate x:Key="CommEditingTemplate" DataType="{x:Type local:InstructionsItem}">
+            <TextBox Text="{Binding Path=Str, Mode=TwoWay}" />
+        </DataTemplate>
         <Style TargetType="{x:Type Button}" x:Key="DefaultButton">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
@@ -33,7 +39,7 @@
             <Setter Property="Foreground" Value="MidnightBlue" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate x:Name="tmpltButton">
+                    <ControlTemplate x:Name="templateButton">
                         <Grid Background="{TemplateBinding Background}">
 
                             <ContentPresenter x:Name="ButtonContent"
@@ -230,7 +236,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0">Алфавит</Label>
                         <TextBox Grid.Column="1"
-                                 Text="{Binding Path=Machine.Alpabet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                 Text="{Binding Path=Machine.Alphabet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Button Command="{Binding AddLeftCommand}" Content="{StaticResource addLeft}"
@@ -247,7 +253,10 @@
                               dataGrid2D:ItemsSource.ColumnHeadersSource="{Binding ColumnHeaders}"
                               dataGrid2D:ItemsSource.RowHeadersSource="{Binding RowHeaders}"
                               dataGrid2D:Selected.Index="{Binding Path=SelectedIndexIns}"
-                              SelectionMode="Single" SelectionUnit="Cell">
+                              SelectionMode="Single" SelectionUnit="Cell"
+                              dataGrid2D:Cell.EditingTemplate="{StaticResource CommEditingTemplate}"
+                              dataGrid2D:Cell.Template="{StaticResource CommTemplate}"
+                              IsReadOnly="False">
 
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDown">

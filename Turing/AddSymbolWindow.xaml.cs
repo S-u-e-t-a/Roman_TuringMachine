@@ -7,10 +7,10 @@ namespace Turing
     /// </summary>
     public partial class AddSymbolWindow : Window
     {
-        public AddSymbolWindow(string Alphabet)
+        public AddSymbolWindow(string alphabet)
         {
             InitializeComponent();
-            DataContext = new AddSymbolVM(Alphabet);
+            DataContext = new AddSymbolVm(alphabet);
         }
     }
 }

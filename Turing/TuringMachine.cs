@@ -8,47 +8,36 @@ using System.Threading.Tasks;
 
 namespace Turing
 {
-    internal class TuringMachineEventArgs
-    {
-        public TuringMachineEventArgs(string mes)
-        {
-            Message = mes;
-        }
-
-        // Сообщение
-        public string Message { get; }
-    }
-
+    #region events
+    
     internal class StateChangedEventArgs
     {
         public StateChangedEventArgs(States state)
         {
-            this.state = state;
+            this.State = state;
         }
-
-        // Сообщение
-        public States state { get; }
+        public States State { get; }
     }
 
     internal class InstructionIsNullEventArgs
     {
-        public int q;
-
-        // Сообщение
-        public char sym;
-
+        public int Q;
+        public char Sym;
         public InstructionIsNullEventArgs(char sym, int q)
         {
-            this.sym = sym;
-            this.q = q;
+            this.Sym = sym;
+            this.Q = q;
         }
     }
 
+    #endregion
+
+
     internal enum States
     {
-        working,
-        paused,
-        stopped
+        Working,
+        Paused,
+        Stopped
     }
 
     internal class TuringMachine : INotifyPropertyChanged
@@ -57,16 +46,14 @@ namespace Turing
 
         public delegate void StateChangedHandler(object sender, StateChangedEventArgs e);
 
-        public delegate void TuringMachineHandler(object sender, TuringMachineEventArgs e);
-
         public TuringMachine()
         {
-            CurrentState = States.stopped;
-            q = 1;
+            CurrentState = States.Stopped;
+            _q = 1;
             Delay = 100;
-            Instructions = new Dictionary<char, ObservableCollection<string>>();
+            Instructions = new Dictionary<char, ObservableCollection<InstructionsItem>>();
             TapeItems = new ObservableCollection<TapeItem>();
-            for (int i = 0; i < initialLenOfTape; i++)
+            for (int i = 0; i < _initialLenOfTape; i++)
             {
                 TapeItems.Add(new TapeItem(i));
             }
@@ -74,37 +61,36 @@ namespace Turing
             CurrentIndex = 0;
         }
 
-        public event TuringMachineHandler Notify;
         public event StateChangedHandler StateChanged;
         public event InstructionIsNullHandler InstructionIsNull;
 
         #region Fields
 
-        private States currentState;
+        private States _currentState;
 
         public States CurrentState
         {
-            get => currentState;
+            get => _currentState;
             set
             {
-                currentState = value;
-                if (currentState == States.stopped)
+                _currentState = value;
+                if (_currentState == States.Stopped)
                 {
-                    q = 1;
+                    _q = 1;
                 }
 
-                StateChanged?.Invoke(this, new StateChangedEventArgs(currentState));
+                StateChanged?.Invoke(this, new StateChangedEventArgs(_currentState));
                 OnPropertyChanged();
             }
         }
 
-        private readonly int initialLenOfTape = 200;
-        private int q;
-        private string alpabet;
+        private readonly int _initialLenOfTape = 200;
+        private int _q;
+        private string _alphabet;
 
-        public string Alpabet
+        public string Alphabet
         {
-            get => alpabet;
+            get => _alphabet;
             set
             {
                 SortedSet<char> symbols = new SortedSet<char>(value.ToCharArray());
@@ -113,28 +99,28 @@ namespace Turing
                     symbols.Add(' ');
                 }
 
-                alpabet = new string(symbols.ToArray());
+                _alphabet = new string(symbols.ToArray());
                 OnPropertyChanged();
             }
         }
 
-        private string comment;
+        private string _comment;
 
         public string Comment
         {
-            get => comment;
+            get => _comment;
             set
             {
-                comment = value;
+                _comment = value;
                 OnPropertyChanged();
             }
         }
 
-        private int currentIndex;
+        private int _currentIndex;
 
         public int CurrentIndex
         {
-            get => currentIndex;
+            get => _currentIndex;
             set
             {
                 if (value == -1)
@@ -142,60 +128,64 @@ namespace Turing
                     TapeItems.Insert(0, new TapeItem(TapeItems[0].Index - 1));
                     TapeItems[1].IsSelected = false;
                     TapeItems[0].IsSelected = true;
-                    currentIndex = 0;
+                    _currentIndex = 0;
                 }
                 else if (value == TapeItems.Count)
                 {
                     TapeItems.Add(new TapeItem(TapeItems.Count));
                     TapeItems[TapeItems.Count - 2].IsSelected = false;
                     TapeItems[TapeItems.Count - 1].IsSelected = true;
-                    currentIndex = value;
+                    _currentIndex = value;
                 }
                 else
                 {
-                    TapeItems[currentIndex].IsSelected = false;
+                    TapeItems[_currentIndex].IsSelected = false;
                     TapeItems[value].IsSelected = true;
-                    currentIndex = value;
+                    _currentIndex = value;
                 }
 
                 OnPropertyChanged();
             }
         }
 
-        private int delay;
+        private int _delay;
 
         public int Delay
         {
-            get => delay;
+            get => _delay;
             set
             {
-                delay = value;
+                _delay = value;
                 OnPropertyChanged();
             }
         }
 
         public int CountOfQ => Instructions.ElementAt(0).Value.Count;
 
-        private Dictionary<char, ObservableCollection<string>> instructions;
+        private KeyValuePair<char, int> _previousInstruction;
+        private bool _isFirstStep = true;
 
-        public Dictionary<char, ObservableCollection<string>> Instructions
+
+        private Dictionary<char, ObservableCollection<InstructionsItem>> _instructions;
+
+        public Dictionary<char, ObservableCollection<InstructionsItem>> Instructions
         {
-            get => instructions;
+            get => _instructions;
             set
             {
-                instructions = value;
+                _instructions = value;
                 OnPropertyChanged();
             }
         }
-
-        private ObservableCollection<TapeItem> tapeItems;
+        
+        private ObservableCollection<TapeItem> _tapeItems;
 
         public ObservableCollection<TapeItem> TapeItems
         {
-            get => tapeItems;
+            get => _tapeItems;
             set
             {
-                tapeItems = value;
+                _tapeItems = value;
                 OnPropertyChanged();
             }
         }
@@ -206,56 +196,88 @@ namespace Turing
 
         #region Calculations
 
-        public void makeStep()
+        private void MakeInstruction(int index, Comm ins)
         {
-            var currentTapeItem = TapeItems[CurrentIndex];
-            string strInstruction = Instructions[currentTapeItem.Letter][q - 1];
-            string strQ = string.Empty;
-            for (int i = 0; i < CountOfQ - 1; i++)
+            TapeItems[index].Letter = ins.Sym;
+            _q = ins.Condition;
+            if (_q != 0)
             {
-                strQ += i.ToString();
-            }
-
-            Regex commRegex = new Regex($"^[{Alpabet}][<>][{strQ}]$");
-            if (strInstruction == null || !commRegex.IsMatch(strInstruction))
-            {
-                InstructionIsNull.Invoke(this, new InstructionIsNullEventArgs(currentTapeItem.Letter, q));
-                CurrentState = States.stopped;
-            }
-            else
-            {
-                var instruction = new Comm(strInstruction);
-                TapeItems[CurrentIndex].Letter = instruction.Sym;
-                q = instruction.Condition;
-                if (q != 0)
+                if (ins.Direction == Direction.Right)
                 {
-                    if (instruction.Direction == direction.left)
-                    {
-                        CurrentIndex--;
-                    }
-                    else
-                    {
-                        CurrentIndex++;
-                    }
+                    CurrentIndex += 1;
                 }
-
-                if (q == 0)
+                else
                 {
-                    q = 1;
-                    CurrentState = States.stopped;
+                    CurrentIndex -= 1;
                 }
             }
         }
 
 
+        private Comm _nextComm;
+
+        public void MakeStep()
+        {
+            //TapeItems[CurrentIndex].IsSelected = true;
+            if (_previousInstruction.Key != '\0')
+            {
+                Instructions[_previousInstruction.Key][_previousInstruction.Value].IsSelected = false;
+            }
+
+            //previousInstruction = new KeyValuePair<char, int>(currentTapeItem.Letter, q - 1);
+            if (!_isFirstStep)
+            {
+                MakeInstruction(CurrentIndex, _nextComm);
+            }
+
+            _isFirstStep = false;
+            /*else
+            {
+                nextComm = Instructions[currentTapeItem.Letter][q - 1];
+                previousInstruction = new KeyValuePair<char, int>(currentTapeItem.Letter, q - 1);
+                //CurrentState = States.paused;
+            }*/
+            var currentTapeItem = TapeItems[CurrentIndex];
+            if (_q != 0)
+            {
+                Instructions[currentTapeItem.Letter][_q - 1].IsSelected = true;
+                _nextComm = new Comm(Instructions[currentTapeItem.Letter][_q - 1].Str);
+
+                string strQ = string.Empty;
+                for (int i = 0; i < CountOfQ - 1; i++)
+                {
+                    strQ += i.ToString();
+                }
+
+                Regex commRegex = new Regex($"^[{Alphabet}][<>][{strQ}]$");
+                if (_nextComm == null || !commRegex.IsMatch(_nextComm.ToString()))
+                {
+                    InstructionIsNull?.Invoke(this, new InstructionIsNullEventArgs(currentTapeItem.Letter, _q));
+                    CurrentState = States.Stopped;
+                    Instructions[currentTapeItem.Letter][_q - 1].IsSelected = false;
+                }
+
+                _previousInstruction = new KeyValuePair<char, int>(currentTapeItem.Letter, _q - 1);
+            }
+
+            if (_q == 0)
+            {
+                _q = 1;
+                CurrentState = States.Stopped;
+                Instructions[_previousInstruction.Key][_previousInstruction.Value].IsSelected = false;
+                _previousInstruction = new KeyValuePair<char, int>();
+                _isFirstStep = true;
+            }
+        }
+
         public async Task Calc()
         {
-            CurrentState = States.working;
-            while (CurrentState == States.working)
+            CurrentState = States.Working;
+            while (CurrentState == States.Working)
             {
-                if (CurrentState == States.working)
+                if (CurrentState == States.Working)
                 {
-                    makeStep();
+                    MakeStep();
                     await Task.Delay(Delay);
                 }
             }
@@ -265,10 +287,10 @@ namespace Turing
 
         #region ChangeInstructions
 
-        public void regenerate()
+        public void Regenerate()
         {
-            //Trace.WriteLine(Alpabet);
-            var newKeys = Alpabet.ToCharArray();
+            //Trace.WriteLine(Alphabet);
+            var newKeys = Alphabet.ToCharArray();
             int lenOfLists = Instructions.ElementAt(0).Value.Count;
             var oldKeys = Instructions.Keys.ToArray();
             /*Trace.WriteLine("Old---------------------");
@@ -286,7 +308,7 @@ namespace Turing
             {
                 if (!Instructions.ContainsKey(key))
                 {
-                    Instructions[key] = new ObservableCollection<string>();
+                    Instructions[key] = new ObservableCollection<InstructionsItem>();
                     for (int i = 0; i < lenOfLists; i++)
                     {
                         Instructions[key].Add(null);
@@ -294,27 +316,16 @@ namespace Turing
                 }
             }
 
-            for (int i = 0; i < oldKeys.Length; i++)
+            foreach (var t in oldKeys)
             {
-                if (!newKeys.Contains(oldKeys[i]))
+                if (!newKeys.Contains(t))
                 {
-                    Instructions.Remove(oldKeys[i]);
+                    Instructions.Remove(t);
                 }
             }
-
-            /*Trace.WriteLine("New---------------------");
-            foreach (var VARIABLE in Instructions)
-            {
-                Trace.Write(VARIABLE.Key + " ");
-                foreach (var ls in VARIABLE.Value)
-                {
-                    Trace.Write(ls + " ");
-                }
-                Trace.WriteLine(Environment.NewLine);
-            }*/
         }
 
-        public void addColumnLeft(int currentColumn)
+        public void AddColumnLeft(int currentColumn)
         {
             foreach (var keypair in Instructions)
             {
@@ -322,7 +333,7 @@ namespace Turing
             }
         }
 
-        public void addColumnRight(int currentColumn)
+        public void AddColumnRight(int currentColumn)
         {
             foreach (var keypair in Instructions)
             {
@@ -331,7 +342,7 @@ namespace Turing
         }
 
 
-        public void delColumn(int currentColumn)
+        public void DelColumn(int currentColumn)
         {
             foreach (var keypair in Instructions)
             {
@@ -358,33 +369,142 @@ namespace Turing
 
     #region Misc
 
-    internal enum direction
+    internal enum Direction
     {
-        left = 0,
-        right
+        Left = 0,
+        Right
     }
+
+    internal class InstructionsItem : INotifyPropertyChanged
+    {
+        private string _color;
+
+
+        private bool _isSelected;
+        private string _str;
+
+        public InstructionsItem(string str)
+        {
+            Str = str;
+            IsSelected = false;
+        }
+
+        public string Str
+        {
+            get => _str;
+            set
+            {
+                _str = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Color
+        {
+            get => _color;
+            set
+            {
+                _color = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (value)
+                {
+                    Color = "#99ff99";
+                }
+                else
+                {
+                    Color = null;
+                }
+
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
+    }
+
 
     internal class Comm : INotifyPropertyChanged
     {
-        public Comm(char sym, direction dir, int condition)
+        private string _color;
+
+        private bool _isSelected;
+
+        public Comm(char sym, Direction dir, int condition)
         {
+            IsSelected = false;
             Sym = sym;
             Condition = condition;
             Direction = dir;
         }
 
-
         public Comm(string command)
         {
+            IsSelected = false;
             Sym = command[0];
             Condition = int.Parse(command[2].ToString());
             if (command[1] == '<')
             {
-                Direction = direction.left;
+                Direction = Direction.Left;
             }
             else
             {
-                Direction = direction.right;
+                Direction = Direction.Right;
+            }
+        }
+
+        public string StrValue
+        {
+            get => ToString();
+            set
+            {
+                var newCom = new Comm(value);
+                Condition = newCom.Condition;
+                Direction = newCom.Direction;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Color
+        {
+            get => _color;
+            private set
+            {
+                _color = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (value)
+                {
+                    Color = "#99ff99";
+                }
+                else
+                {
+                    Color = null;
+                }
+
+                _isSelected = value;
+                OnPropertyChanged();
             }
         }
 
@@ -393,7 +513,7 @@ namespace Turing
         public override string ToString()
         {
             string dir;
-            if (Direction == direction.right)
+            if (Direction == Direction.Right)
             {
                 dir = ">";
             }
@@ -413,37 +533,37 @@ namespace Turing
 
         #region fields
 
-        private char sym;
-        private direction direction; // 0-left 1-right
-        private int condition;
+        private char _sym;
+        private Direction _direction; // 0-left 1-right
+        private int _condition;
 
 
         public char Sym
         {
-            get => sym;
+            get => _sym;
             set
             {
-                sym = value;
+                _sym = value;
                 OnPropertyChanged();
             }
         }
 
-        public direction Direction
+        public Direction Direction
         {
-            get => direction;
+            get => _direction;
             set
             {
-                direction = value;
+                _direction = value;
                 OnPropertyChanged();
             }
         } // 0-left 1-right
 
         public int Condition
         {
-            get => condition;
+            get => _condition;
             set
             {
-                condition = value;
+                _condition = value;
                 OnPropertyChanged();
             }
         }

@@ -11,7 +11,7 @@
         Title="Выберите символ для ячейки ленты"
 
         WindowStyle="ToolWindow"
-        d:DataContext="{d:DesignInstance local:AddSymbolVM}"
+        d:DataContext="{d:DesignInstance local:AddSymbolVm}"
         Height="{Binding WindowHeight, Mode=TwoWay}"
         Width="{Binding WindowWidth, Mode=TwoWay}">
     <Grid>

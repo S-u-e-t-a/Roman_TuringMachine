@@ -5,16 +5,16 @@ namespace Turing
 {
     public class TapeItem : INotifyPropertyChanged
     {
-        private string color;
-        private int index;
+        private string _color;
+        private int _index;
 
-        private bool isSelected;
+        private bool _isSelected;
 
-        private char letter;
+        private char _letter;
 
         public TapeItem(int index, char sym = ' ')
         {
-            this.index = index;
+            this._index = index;
             Letter = sym;
         }
 
@@ -26,39 +26,39 @@ namespace Turing
                     Color = "#ffff66"; // желтый
                 else
                     Color = "#ffffff"; // белый
-                isSelected = value;
+                _isSelected = value;
                 OnPropertyChanged();
             }
-            get => isSelected;
+            get => _isSelected;
         }
 
         public string Color
         {
             private set
             {
-                color = value;
+                _color = value;
                 OnPropertyChanged();
             }
 
-            get => color;
+            get => _color;
         }
 
         public char Letter
         {
-            get => letter;
+            get => _letter;
             set
             {
-                letter = value;
+                _letter = value;
                 OnPropertyChanged();
             }
         }
 
         public int Index
         {
-            get => index;
+            get => _index;
             set
             {
-                index = value;
+                _index = value;
                 OnPropertyChanged();
             }
         }

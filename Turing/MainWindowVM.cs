@@ -8,31 +8,31 @@ using Gu.Wpf.DataGrid2D;
 
 namespace Turing
 {
-    internal class MainWindowVM : INotifyPropertyChanged
+    internal class MainWindowVm : INotifyPropertyChanged
     {
         #region Fields
 
         #region FieldsForMouse
 
-        private double top;
-        private double left;
+        private double _top;
+        private double _left;
 
         public double Top
         {
-            get => top;
+            get => _top;
             set
             {
-                top = value;
+                _top = value;
                 OnPropertyChanged();
             }
         }
 
         public double Left
         {
-            get => left;
+            get => _left;
             set
             {
-                left = value;
+                _left = value;
                 OnPropertyChanged();
             }
         }
@@ -63,50 +63,50 @@ namespace Turing
         #endregion
 
 
-        private bool isPauseButtonEnabled;
-        private bool isStopButtonEnabled;
-        private bool isStartButtonEnabled;
+        private bool _isPauseButtonEnabled;
+        private bool _isStopButtonEnabled;
+        private bool _isStartButtonEnabled;
 
 
         public bool IsPauseButtonEnabled
         {
-            get => isPauseButtonEnabled;
+            get => _isPauseButtonEnabled;
             set
             {
-                isPauseButtonEnabled = value;
+                _isPauseButtonEnabled = value;
                 OnPropertyChanged();
             }
         }
 
         public bool IsStopButtonEnabled
         {
-            get => isStopButtonEnabled;
+            get => _isStopButtonEnabled;
             set
             {
-                isStopButtonEnabled = value;
+                _isStopButtonEnabled = value;
                 OnPropertyChanged();
             }
         }
 
         public bool IsStartButtonEnabled
         {
-            get => isStartButtonEnabled;
+            get => _isStartButtonEnabled;
             set
             {
-                isStartButtonEnabled = value;
+                _isStartButtonEnabled = value;
                 OnPropertyChanged();
             }
         }
 
-        private TuringMachine machine;
+        private TuringMachine _machine;
 
         public TuringMachine Machine
 
         {
-            get => machine;
+            get => _machine;
             set
             {
-                machine = value;
+                _machine = value;
                 OnPropertyChanged();
             }
         }
@@ -115,7 +115,9 @@ namespace Turing
         {
             get
             {
-                int lenofinstrutions = Machine.Instructions.ElementAt(0).Value.Count; // ультра говнокод (получаем количество элементов в массиве)
+                int lenofinstrutions =
+                    Machine.Instructions.ElementAt(0).Value
+                        .Count; // ультра говнокод (получаем количество элементов в массиве)
                 List<string> headers = new List<string>();
                 for (int i = 0; i < lenofinstrutions; i++)
                 {
@@ -132,77 +134,77 @@ namespace Turing
         }
 
 
-        private object selectedItem;
+        private object _selectedItem;
 
         public object SelectedItem
         {
-            get => selectedItem;
+            get => _selectedItem;
 
             set
             {
-                if (Equals(value, selectedItem))
+                if (Equals(value, _selectedItem))
                 {
                     return;
                 }
 
-                selectedItem = value;
+                _selectedItem = value;
                 OnPropertyChanged();
             }
         }
 
 
-        private int selectedIndex;
+        private int _selectedIndex;
 
         public int SelectedIndex
         {
-            get => selectedIndex;
+            get => _selectedIndex;
 
             set
             {
-                if (Equals(value, selectedIndex))
+                if (Equals(value, _selectedIndex))
                 {
                     return;
                 }
 
-                selectedIndex = value;
+                _selectedIndex = value;
                 OnPropertyChanged();
             }
         }
 
 
-        private RowColumnIndex selectedIndexIns;
+        private RowColumnIndex _selectedIndexIns;
 
         public RowColumnIndex SelectedIndexIns
         {
-            get => selectedIndexIns;
+            get => _selectedIndexIns;
 
             set
             {
-                if (Equals(value, selectedIndexIns))
+                if (Equals(value, _selectedIndexIns))
                 {
                     return;
                 }
 
-                selectedIndexIns = value;
+                _selectedIndexIns = value;
                 OnPropertyChanged();
             }
         }
 
 
-        private TapeItem selectedTapeItem;
+        private TapeItem _selectedTapeItem;
 
         public TapeItem SelectedTapeItem
         {
-            get => selectedTapeItem;
+            get => _selectedTapeItem;
 
             set
             {
-                if (Equals(value, selectedTapeItem))
+                if (Equals(value, _selectedTapeItem))
                 {
                     return;
                 }
 
-                selectedTapeItem = value;
+                _selectedTapeItem = value;
                 OnPropertyChanged();
             }
         }
@@ -269,14 +271,14 @@ namespace Turing
 
         #region ClaculationsCommands
 
-        private RelayCommand calcCommand;
+        private RelayCommand _calcCommand;
 
         public RelayCommand CalcCommand
         {
             get
             {
-                return calcCommand ??
-                       (calcCommand = new RelayCommand(o =>
+                return _calcCommand ??
+                       (_calcCommand = new RelayCommand(o =>
                        {
                            //Machine.CurrentIndex = 99;
                            Machine.Calc();
@@ -285,14 +287,14 @@ namespace Turing
             }
         }
 
-        private RelayCommand stepCommand;
+        private RelayCommand _stepCommand;
 
         public RelayCommand StepCommand
         {
             get
             {
-                return stepCommand ??
-                       (stepCommand = new RelayCommand(o => { Machine.makeStep(); }));
+                return _stepCommand ??
+                       (_stepCommand = new RelayCommand(o => { Machine.MakeStep(); }));
             }
         }
 
@@ -300,47 +302,47 @@ namespace Turing
 
         #region TapeCommands
 
-        private RelayCommand moveLeftCommand;
+        private RelayCommand _moveLeftCommand;
 
         public RelayCommand MoveLeftCommand
         {
             get
             {
-                return moveLeftCommand ??
-                       (moveLeftCommand = new RelayCommand(o => { Machine.CurrentIndex -= 1; }));
+                return _moveLeftCommand ??
+                       (_moveLeftCommand = new RelayCommand(o => { Machine.CurrentIndex -= 1; }));
             }
         }
 
-        private RelayCommand moveRightCommand;
+        private RelayCommand _moveRightCommand;
 
         public RelayCommand MoveRightCommand
         {
             get
             {
-                return moveRightCommand ??
-                       (moveRightCommand = new RelayCommand(o => { Machine.CurrentIndex += 1; }));
+                return _moveRightCommand ??
+                       (_moveRightCommand = new RelayCommand(o => { Machine.CurrentIndex += 1; }));
             }
         }
 
 
-        private RelayCommand cellSelectedCommand;
+        private RelayCommand _cellSelectedCommand;
 
         public RelayCommand CellSelectedCommand
         {
             get
             {
-                return cellSelectedCommand ??
-                       (cellSelectedCommand = new RelayCommand(o =>
+                return _cellSelectedCommand ??
+                       (_cellSelectedCommand = new RelayCommand(o =>
                        {
                            if (SelectedIndex != -1)
                            {
-                               var window = new AddSymbolWindow(Machine.Alpabet);
+                               var window = new AddSymbolWindow(Machine.Alphabet);
 
                                window.Left = PanelX + Left;
                                window.Top = PanelY + Top;
 
                                window.ShowDialog();
-                               SelectedTapeItem.Letter = (window.DataContext as AddSymbolVM).SelectedItem;
+                               SelectedTapeItem.Letter = (window.DataContext as AddSymbolVm).SelectedItem;
                                SelectedIndex = -1;
                            }
                        }));
@@ -351,46 +353,46 @@ namespace Turing
 
         #region InstructionsCommands
 
-        private RelayCommand pauseCommand;
+        private RelayCommand _pauseCommand;
 
         public RelayCommand PauseCommand
         {
             get
             {
-                return pauseCommand ??
-                       (pauseCommand = new RelayCommand(o =>
+                return _pauseCommand ??
+                       (_pauseCommand = new RelayCommand(o =>
                        {
-                           Machine.CurrentState = States.paused;
+                           Machine.CurrentState = States.Paused;
                            OnPropertyChanged();
                        }));
             }
         }
 
-        private RelayCommand stopCommand;
+        private RelayCommand _stopCommand;
 
         public RelayCommand StopCommand
         {
             get
             {
-                return stopCommand ??
-                       (stopCommand = new RelayCommand(o =>
+                return _stopCommand ??
+                       (_stopCommand = new RelayCommand(o =>
                        {
-                           Machine.CurrentState = States.stopped;
+                           Machine.CurrentState = States.Stopped;
                            OnPropertyChanged();
                        }));
             }
         }
 
-        private RelayCommand addLeftCommand;
+        private RelayCommand _addLeftCommand;
 
         public RelayCommand AddLeftCommand
         {
             get
             {
-                return addLeftCommand ??
-                       (addLeftCommand = new RelayCommand(o =>
+                return _addLeftCommand ??
+                       (_addLeftCommand = new RelayCommand(o =>
                        {
-                           Machine.addColumnLeft(SelectedIndexIns.Column);
+                           Machine.AddColumnLeft(SelectedIndexIns.Column);
                            OnPropertyChanged();
                            OnPropertyChanged("ColumnHeaders");
                        }));
@@ -398,32 +400,32 @@ namespace Turing
         }
 
 
-        private RelayCommand addRightCommand;
+        private RelayCommand _addRightCommand;
 
         public RelayCommand AddRightCommand
         {
             get
             {
-                return addRightCommand ??
-                       (addRightCommand = new RelayCommand(o =>
+                return _addRightCommand ??
+                       (_addRightCommand = new RelayCommand(o =>
                        {
-                           Machine.addColumnRight(SelectedIndexIns.Column);
+                           Machine.AddColumnRight(SelectedIndexIns.Column);
                            OnPropertyChanged();
                            OnPropertyChanged("ColumnHeaders");
                        }));
             }
         }
 
-        private RelayCommand delColumnCommand;
+        private RelayCommand _delColumnCommand;
 
         public RelayCommand DelColumnCommand
         {
             get
             {
-                return delColumnCommand ??
-                       (delColumnCommand = new RelayCommand(o =>
+                return _delColumnCommand ??
+                       (_delColumnCommand = new RelayCommand(o =>
                        {
-                           Machine.delColumn(SelectedIndexIns.Column);
+                           Machine.DelColumn(SelectedIndexIns.Column);
                            OnPropertyChanged();
                            OnPropertyChanged("ColumnHeaders");
                        }));
@@ -431,16 +433,16 @@ namespace Turing
         }
 
 
-        private RelayCommand regenerateColumns;
+        private RelayCommand _regenerateColumns;
 
         public RelayCommand RegenerateColumns
         {
             get
             {
-                return regenerateColumns ??
-                       (regenerateColumns = new RelayCommand(o =>
+                return _regenerateColumns ??
+                       (_regenerateColumns = new RelayCommand(o =>
                        {
-                           Machine.regenerate();
+                           Machine.Regenerate();
                            //обновляем список (очень криво)
                            AddLeftCommand.Execute(null);
                            DelColumnCommand.Execute(null);
@@ -456,27 +458,33 @@ namespace Turing
 
         #region Methods
 
-        public MainWindowVM()
+        public MainWindowVm()
         {
             #region MachineFilling
 
             Machine = new TuringMachine();
             Machine.StateChanged += UpdateButtons;
-            Machine.InstructionIsNull += onNullInstruction;
-            Machine.CurrentState = States.stopped;
+            Machine.InstructionIsNull += OnNullInstruction;
+            Machine.CurrentState = States.Stopped;
 
             //Machine.CurrentIndex = 9;
-            Machine.Alpabet = "01 ";
-            Machine.Instructions = new Dictionary<char, ObservableCollection<string>>();
+            Machine.Alphabet = "01 ";
+            Machine.Instructions = new Dictionary<char, ObservableCollection<InstructionsItem>>();
 
-            Machine.Instructions['0'] = new ObservableCollection<string> {null, null, null, null};
-            Machine.Instructions['1'] = new ObservableCollection<string> {null, null, null, null};
-            Machine.Instructions[' '] = new ObservableCollection<string> {null, null, null, null};
+            Machine.Instructions['0'] = new ObservableCollection<InstructionsItem> {null, null, null, null};
+            Machine.Instructions['1'] = new ObservableCollection<InstructionsItem> {null, null, null, null};
+            Machine.Instructions[' '] = new ObservableCollection<InstructionsItem> {null, null, null, null};
 
-            Machine.Instructions['0'][1] = "1>2";
-            Machine.Instructions['1'][1] = "0>2";
-            Machine.Instructions[' '][0] = " >2";
-            Machine.Instructions[' '][1] = " >0";
+            Machine.Instructions['0'][1] = new InstructionsItem("1>2");
+            Machine.Instructions['1'][1] = new InstructionsItem("0>2");
+            Machine.Instructions[' '][0] = new InstructionsItem(" >2");
+            Machine.Instructions[' '][1] = new InstructionsItem(" >0");
+
+
+            //Machine.Instructions1['0'][1] = "1>2";
+            //Machine.Instructions1['1'][1] = "0>2";
+            //Machine.Instructions1[' '][0] = " >2";
+            //Machine.Instructions1[' '][1] = " >0";
 
             /*for (int i = 0; i < 100; i++)
             {
@@ -500,19 +508,19 @@ namespace Turing
 
         public void UpdateButtons(object sender, StateChangedEventArgs e)
         {
-            if (e.state == States.paused)
+            if (e.State == States.Paused)
             {
                 IsStartButtonEnabled = true;
                 IsStopButtonEnabled = true;
                 IsPauseButtonEnabled = false;
             }
-            else if (e.state == States.working)
+            else if (e.State == States.Working)
             {
                 IsStartButtonEnabled = false;
                 IsStopButtonEnabled = true;
                 IsPauseButtonEnabled = true;
             }
-            else if (e.state == States.stopped)
+            else if (e.State == States.Stopped)
             {
                 IsStartButtonEnabled = true;
                 IsStopButtonEnabled = false;
@@ -520,9 +528,9 @@ namespace Turing
             }
         }
 
-        public void onNullInstruction(object sender, InstructionIsNullEventArgs e)
+        public void OnNullInstruction(object sender, InstructionIsNullEventArgs e)
         {
-            MessageBox.Show($"Нет команды в ячейке ({e.sym},Q{e.q}.", "Ошибка", MessageBoxButton.OK);
+            MessageBox.Show($"Нет команды в ячейке ({e.Sym},Q{e.Q}.", "Ошибка", MessageBoxButton.OK);
         }
 
         public void DisplayMessage(object sender, TuringMachineEventArgs e)

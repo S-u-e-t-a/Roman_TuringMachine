@@ -11,7 +11,7 @@ namespace Turing
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new MainWindowVM();
+            DataContext = new MainWindowVm();
         }
 
         private void DataWindow_Closing(object o, CancelEventArgs e)
