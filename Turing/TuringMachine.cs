@@ -19,12 +19,23 @@ namespace Turing
         public States State { get; }
     }
 
-    internal class InstructionIsNullEventArgs
+    internal class ProgramDoneEventArgs
     {
+        public ProgramDoneEventArgs(string message)
+        {
+            this.Message = message;
+        }
+        public string Message { get; }
+    }
+
+    internal class InstructionIsBadEventArgs
+    {
+        public string Message;
         public int Q;
         public char Sym;
-        public InstructionIsNullEventArgs(char sym, int q)
+        public InstructionIsBadEventArgs(string message,char sym, int q)
         {
+            this.Message = message;
             this.Sym = sym;
             this.Q = q;
         }
@@ -42,9 +53,11 @@ namespace Turing
 
     internal class TuringMachine : INotifyPropertyChanged
     {
-        public delegate void InstructionIsNullHandler(object sender, InstructionIsNullEventArgs e);
+        public delegate void InstructionIsBadHandler(object sender, InstructionIsBadEventArgs e);
 
         public delegate void StateChangedHandler(object sender, StateChangedEventArgs e);
+
+        public delegate void ProgramDoneHandler(object sender, ProgramDoneEventArgs e);
 
         public TuringMachine()
         {
@@ -62,7 +75,8 @@ namespace Turing
         }
 
         public event StateChangedHandler StateChanged;
-        public event InstructionIsNullHandler InstructionIsNull;
+        public event InstructionIsBadHandler InstructionIsBad;
+        public event ProgramDoneHandler ProgramDone;
 
         #region Fields
 
@@ -77,6 +91,11 @@ namespace Turing
                 if (_currentState == States.Stopped)
                 {
                     _q = 1;
+                    if (_previousInstruction.Key != '\0')
+                    {
+                        Instructions[_previousInstruction.Key][_previousInstruction.Value].IsSelected = false;
+                    }
+                    _previousInstruction = new KeyValuePair<char, int>();
                 }
 
                 StateChanged?.Invoke(this, new StateChangedEventArgs(_currentState));
@@ -247,7 +266,17 @@ namespace Turing
                 Regex commRegex = new Regex($"^[{Alphabet}][<>][{strQ}]$");
                 if (_nextComm == null || !commRegex.IsMatch(_nextComm.ToString()))
                 {
-                    InstructionIsNull?.Invoke(this, new InstructionIsNullEventArgs(currentTapeItem.Letter, _q));
+                    if (_nextComm == null || _nextComm.ToString() == "")
+                    {
+                        InstructionIsBad?.Invoke(this,
+                            new InstructionIsBadEventArgs("Нет инструкции в ячейке", currentTapeItem.Letter, _q));
+                    }
+                    else if (!commRegex.IsMatch(_nextComm.ToString()))
+                    {
+                        InstructionIsBad?.Invoke(this,
+                            new InstructionIsBadEventArgs("Некорректная инструкция в ячейке", currentTapeItem.Letter,
+                                _q));
+                    }
                     CurrentState = States.Stopped;
                     Instructions[currentTapeItem.Letter][_q - 1].IsSelected = false;
                 }
@@ -257,10 +286,9 @@ namespace Turing
 
             if (_q == 0)
             {
+                ProgramDone?.Invoke(this, new ProgramDoneEventArgs("Работа программы завершена."));
                 _q = 1;
                 CurrentState = States.Stopped;
-                Instructions[_previousInstruction.Key][_previousInstruction.Value].IsSelected = false;
-                _previousInstruction = new KeyValuePair<char, int>();
                 _isFirstStep = true;
             }
         }
@@ -284,21 +312,9 @@ namespace Turing
 
         public void Regenerate()
         {
-            //Trace.WriteLine(Alphabet);
             var newKeys = Alphabet.ToCharArray();
             int lenOfLists = Instructions.ElementAt(0).Value.Count;
             var oldKeys = Instructions.Keys.ToArray();
-            /*Trace.WriteLine("Old---------------------");
-            foreach (var VARIABLE in Instructions)
-            {
-                Trace.Write(VARIABLE.Key + " ");
-                foreach (var ls in VARIABLE.Value)
-                {
-                    Trace.Write(ls + " ");
-                }
-                Trace.WriteLine(Environment.NewLine);
-            }*/
-
             foreach (var key in newKeys)
             {
                 if (!Instructions.ContainsKey(key))
@@ -435,99 +451,9 @@ namespace Turing
 
     internal class Comm : INotifyPropertyChanged
     {
-        private string _color;
-
-        private bool _isSelected;
-
-        public Comm(char sym, Direction dir, int condition)
-        {
-            IsSelected = false;
-            Sym = sym;
-            Condition = condition;
-            Direction = dir;
-        }
-
-        public Comm(string command)
-        {
-            IsSelected = false;
-            Sym = command[0];
-            Condition = int.Parse(command[2].ToString());
-            if (command[1] == '<')
-            {
-                Direction = Direction.Left;
-            }
-            else
-            {
-                Direction = Direction.Right;
-            }
-        }
-
-        public string StrValue
-        {
-            get => ToString();
-            set
-            {
-                var newCom = new Comm(value);
-                Condition = newCom.Condition;
-                Direction = newCom.Direction;
-                OnPropertyChanged();
-            }
-        }
-
-        public string Color
-        {
-            get => _color;
-            private set
-            {
-                _color = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                if (value)
-                {
-                    Color = "#99ff99";
-                }
-                else
-                {
-                    Color = null;
-                }
-
-                _isSelected = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public override string ToString()
-        {
-            string dir;
-            if (Direction == Direction.Right)
-            {
-                dir = ">";
-            }
-            else
-            {
-                dir = "<";
-            }
-
-            return Sym + dir + Condition;
-        }
-
-        public void OnPropertyChanged([CallerMemberName] string prop = "")
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-        }
-
         #region fields
-
+        private string _color;
+        private bool _isSelected;
         private char _sym;
         private Direction _direction; // 0-left 1-right
         private int _condition;
@@ -562,8 +488,80 @@ namespace Turing
                 OnPropertyChanged();
             }
         }
+        public string Color
+        {
+            get => _color;
+            private set
+            {
+                _color = value;
+                OnPropertyChanged();
+            }
+        }
 
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (value)
+                {
+                    Color = "#99ff99";
+                }
+                else
+                {
+                    Color = null;
+                }
+
+                _isSelected = value;
+                OnPropertyChanged();
+            }
+        }
         #endregion
+
+        public Comm(char sym, Direction dir, int condition)
+        {
+            IsSelected = false;
+            Sym = sym;
+            Condition = condition;
+            Direction = dir;
+        }
+
+        public Comm(string command)
+        {
+            IsSelected = false;
+            Sym = command[0];
+            Condition = int.Parse(command[2].ToString());
+            if (command[1] == '<')
+            {
+                Direction = Direction.Left;
+            }
+            else
+            {
+                Direction = Direction.Right;
+            }
+        }
+
+        public override string ToString()
+        {
+            string dir;
+            if (Direction == Direction.Right)
+            {
+                dir = ">";
+            }
+            else
+            {
+                dir = "<";
+            }
+
+            return Sym + dir + Condition;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged([CallerMemberName] string prop = "")
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(prop));
+        }
     }
 
     #endregion

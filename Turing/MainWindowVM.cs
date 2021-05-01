@@ -473,11 +473,13 @@ namespace Turing
             #region MachineFilling
 
             Machine = new TuringMachine();
-            Machine.StateChanged += UpdateButtons;
-            Machine.InstructionIsNull += OnNullInstruction;
-            Machine.CurrentState = States.Stopped;
 
-            //Machine.CurrentIndex = 9;
+            Machine.StateChanged += UpdateButtons;
+            Machine.InstructionIsBad += OnBadInstruction;
+            Machine.ProgramDone += ProgramDone;
+
+            Machine.CurrentState = States.Stopped;
+            Machine.CurrentIndex = 9;
             Machine.Alphabet = "01 ";
             Machine.Instructions = new Dictionary<char, ObservableCollection<InstructionsItem>>();
 
@@ -529,9 +531,14 @@ namespace Turing
             }
         }
 
-        public void OnNullInstruction(object sender, InstructionIsNullEventArgs e)
+        public void ProgramDone(object sender, ProgramDoneEventArgs e)
         {
-            MessageBox.Show($"Нет команды в ячейке ({e.Sym},Q{e.Q}.", "Ошибка", MessageBoxButton.OK);
+            MessageBox.Show($"{e.Message}", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public void OnBadInstruction(object sender, InstructionIsBadEventArgs e)
+        {
+            MessageBox.Show($"{e.Message} ({e.Sym},Q{e.Q}).", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         #endregion
