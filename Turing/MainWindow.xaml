@@ -10,8 +10,7 @@
         Title="MainWindow" Height="724.648" Width="800"
         d:DataContext="{d:DesignInstance local:MainWindowVm}"
         Top="{Binding Path=Top, Mode=TwoWay}"
-        Left="{Binding Path=Left, Mode=TwoWay}"
-        Closing="DataWindow_Closing">
+        Left="{Binding Path=Left, Mode=TwoWay}">
     <Window.Resources>
         <DataTemplate x:Key="CommTemplate" DataType="{x:Type local:InstructionsItem}">
             <TextBox Background="{Binding Path=Color}" Text="{Binding Path=Str, Mode=TwoWay}" />

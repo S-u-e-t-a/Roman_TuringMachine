@@ -40,7 +40,6 @@ namespace Turing
 
             WindowWidth = GridWidth + 15; // 15 это ширина окна стандартная вроде как
             WindowHeight = GridHeight + 40; // 40 это высота полочки над окном
-            int a = 2;
         }
 
         public char SelectedItem

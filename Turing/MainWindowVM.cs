@@ -533,11 +533,6 @@ namespace Turing
             MessageBox.Show($"Нет команды в ячейке ({e.Sym},Q{e.Q}.", "Ошибка", MessageBoxButton.OK);
         }
 
-        public void DisplayMessage(object sender, TuringMachineEventArgs e)
-        {
-            MessageBox.Show(e.Message);
-        }
-
         #endregion
 
 
