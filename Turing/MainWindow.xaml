@@ -81,11 +81,30 @@
             Grid.Row="0"
             VerticalAlignment="Top">
             <MenuItem Header="Файл">
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Экспорт в Excel" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Новый" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Открыть..." />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Сохранить" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Сохранить как..." />
                 <Separator />
-                <MenuItem Command="{Binding ExitCommand}" Header="Выход" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Импорт программы" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Экспорт программы" />
+                <Separator />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Выход" />
             </MenuItem>
-            <MenuItem Header="Справка" Command="{Binding ShowHelpCommand}" />
+            <MenuItem Header="Лента">
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Сохранить ленту" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Восстановить ленту" />
+            </MenuItem>
+            <MenuItem Header="Выполнение">
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Запуск" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Выполнить шаг" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Пауза" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Остановить" />
+            </MenuItem>
+            <MenuItem Header="Справка">
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Справка" />
+                <MenuItem Command="{Binding ExportToExcelCommand}" Header="О программе" />
+            </MenuItem>
         </Menu>
 
 
@@ -97,10 +116,11 @@
                         ToolTip="Загрузить программу" />
                 <Button Content="{StaticResource save}" Style="{StaticResource DefaultButton}"
                         ToolTip="Сохранить программу" />
-                <Button Content="{StaticResource saveTape}" Style="{StaticResource DefaultButton}"
-                        ToolTip="Сохранить ленту" />
+                <Button Command="{Binding SaveMachineCommand}"
+                        Content="{StaticResource saveTape}" Style="{StaticResource DefaultButton}"
+                        ToolTip="Сохранить ленту" Click="Button_Click" />
                 <Button Content="{StaticResource openTape}" Style="{StaticResource DefaultButton}"
-                        ToolTip="Восстановить ленту" />
+                        ToolTip="Восстановить ленту" Click="Button_Click_1" />
             </StackPanel>
             <Rectangle Width="20" />
             <StackPanel Orientation="Horizontal">
@@ -215,7 +235,7 @@
                 </DataGrid>
                 <Button Grid.Column="2" Command="{Binding MoveRightCommand}" ToolTip="К следующей ячейке"
                         Content="&gt;"
-                        IsEnabled="{Binding IsControlsEnabled}"/>
+                        IsEnabled="{Binding IsControlsEnabled}" />
             </Grid>
 
             <Grid Grid.Row="1">
@@ -241,11 +261,14 @@
                     </Grid>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Button Command="{Binding AddLeftCommand}" Content="{StaticResource addLeft}"
-                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец слева" IsEnabled="{Binding IsControlsEnabled}"/>
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец слева"
+                                IsEnabled="{Binding IsControlsEnabled}" />
                         <Button Command="{Binding AddRightCommand}" Content="{StaticResource addRight}"
-                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец справа" IsEnabled="{Binding IsControlsEnabled}"/>
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец справа"
+                                IsEnabled="{Binding IsControlsEnabled}" />
                         <Button Command="{Binding DelColumnCommand}" Style="{StaticResource DefaultButton}"
-                                Content="{StaticResource delColumn}" ToolTip="Удалить столбец" IsEnabled="{Binding IsControlsEnabled}"/>
+                                Content="{StaticResource delColumn}" ToolTip="Удалить столбец"
+                                IsEnabled="{Binding IsControlsEnabled}" />
                     </StackPanel>
 
                     <DataGrid Grid.Row="2" x:Name="dg" AutoGenerateColumns="True"

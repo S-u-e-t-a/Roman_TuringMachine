@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
 using Gu.Wpf.DataGrid2D;
 
@@ -219,67 +221,48 @@ namespace Turing
             }
         }
 
-        /*
-        public bool isPauseButtonEnabled;
-        public bool isStopButtonEnabled;
-        public bool isStartButtonEnabled;
-        public bool IsPauseButtonEnabled
-        {
-            set
-            {
-                if (Machine.CurrentState == States.working)
-                {
-                    isPauseButtonEnabled = true;
-                }
-                else
-                {
-                    isPauseButtonEnabled = false;
-                }
-                OnPropertyChanged();
-            }
-            get => isPauseButtonEnabled;
-
-        }
-
-        public bool IsStopButtonEnabled
-        {
-            set
-            {
-                if (Machine.CurrentState != States.stopped)
-                {
-                    isStopButtonEnabled = true;
-                }
-                else
-                {
-                    isStopButtonEnabled = false;
-                }
-                OnPropertyChanged();
-            }
-            get => isPauseButtonEnabled;
-        }
-
-        public bool IsStartButtonEnabled
-        {
-            set
-            {
-                if (Machine.CurrentState != States.working)
-                {
-                    isStartButtonEnabled = true;
-                }
-                else
-                {
-                    isStartButtonEnabled = false;
-                }
-                OnPropertyChanged();
-            }
-            get => isPauseButtonEnabled;
-        }*/
-
         #endregion
 
         #region Commands
 
         #region ClaculationsCommands
+
+        private RelayCommand _saveMachineCommand;
+
+        public RelayCommand SaveMachineCommand
+        {
+            get
+            {
+                return _saveMachineCommand ??
+                       (_saveMachineCommand = new RelayCommand(o =>
+                       {
+                           BinaryFormatter formatter = new BinaryFormatter();
+                           using (FileStream fs = new FileStream("machine.dat", FileMode.OpenOrCreate))
+                           {
+                               formatter.Serialize(fs, Machine);
+                           }
+                       }));
+            }
+        }
+
+        private RelayCommand _loadMachineCommand;
+
+        public RelayCommand LoadMachineCommand
+        {
+            get
+            {
+                return _loadMachineCommand ??
+                       (_loadMachineCommand = new RelayCommand(o =>
+                       {
+                           BinaryFormatter formatter = new BinaryFormatter();
+                           using (FileStream fs = new FileStream("machine.dat", FileMode.OpenOrCreate))
+                           {
+                               Machine = (TuringMachine) formatter.Deserialize(fs);
+                           }
+                       }));
+            }
+        }
+
 
         private RelayCommand _calcCommand;
 
@@ -288,12 +271,7 @@ namespace Turing
             get
             {
                 return _calcCommand ??
-                       (_calcCommand = new RelayCommand(o =>
-                       {
-                           //Machine.CurrentIndex = 99;
-                           Machine.Calc();
-                           //Machine.CurrentIndex = 99;
-                       }));
+                       (_calcCommand = new RelayCommand(o => { Machine.Calc(); }));
             }
         }
 
@@ -501,7 +479,6 @@ namespace Turing
             Machine.TapeItems[16].Letter = '1';
             Machine.TapeItems[17].Letter = '0';
             Machine.TapeItems[18].Letter = '1';
-
 
             #endregion
         }
