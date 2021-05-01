@@ -81,25 +81,31 @@
             Grid.Row="0"
             VerticalAlignment="Top">
             <MenuItem Header="Файл">
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Новый" />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Открыть..." />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Сохранить" />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Сохранить как..." />
+                <MenuItem Command="{Binding NewMachineCommand}" IsEnabled="{Binding IsControlsEnabled}" Header="Новый" />
+                <MenuItem Command="{Binding LoadMachineCommand}" IsEnabled="{Binding IsControlsEnabled}"
+                          Header="Открыть..." />
+                <MenuItem Command="{Binding SaveMachineCommand}" IsEnabled="{Binding IsControlsEnabled}"
+                          Header="Сохранить" />
+                <MenuItem Command="{Binding SaveAsMachineCommand}" IsEnabled="{Binding IsControlsEnabled}"
+                          Header="Сохранить как..." />
                 <Separator />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Импорт программы" />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Экспорт программы" />
+                <MenuItem Command="{Binding SaveAsInsCommand}" IsEnabled="{Binding IsControlsEnabled}"
+                          Header="Импорт программы" />
+                <MenuItem Command="{Binding LoadInsCommand}" IsEnabled="{Binding IsControlsEnabled}"
+                          Header="Экспорт программы" />
                 <Separator />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Выход" />
+                <MenuItem Command="{Binding ExitCommand}" Header="Выход" />
             </MenuItem>
             <MenuItem Header="Лента">
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Сохранить ленту" />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Восстановить ленту" />
+                <MenuItem Command="{Binding SaveTapeCommand}" Header="Сохранить ленту" />
+                <MenuItem Command="{Binding LoadTapeCommand}" Header="Восстановить ленту"
+                          IsEnabled="{Binding IsTapeSaved }" />
             </MenuItem>
             <MenuItem Header="Выполнение">
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Запуск" />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Выполнить шаг" />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Пауза" />
-                <MenuItem Command="{Binding ExportToExcelCommand}" Header="Остановить" />
+                <MenuItem Command="{Binding CalcCommand}" IsEnabled="{Binding IsStartButtonEnabled}" Header="Запуск" />
+                <MenuItem Command="{Binding StepCommand}" Header="Выполнить шаг" />
+                <MenuItem Command="{Binding PauseCommand}" IsEnabled="{Binding IsPauseButtonEnabled}" Header="Пауза" />
+                <MenuItem Command="{Binding StopCommand}" IsEnabled="{Binding IsStopButtonEnabled}" Header="Остановить" />
             </MenuItem>
             <MenuItem Header="Справка">
                 <MenuItem Command="{Binding ExportToExcelCommand}" Header="Справка" />
@@ -111,16 +117,20 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal">
             <StackPanel Orientation="Horizontal">
                 <Button Content="{StaticResource newFile}" Style="{StaticResource DefaultButton}"
+                        Command="{Binding NewMachineCommand}" IsEnabled="{Binding IsControlsEnabled}"
                         ToolTip="Новая программа" />
-                <Button Content="{StaticResource openFolder}" Style="{StaticResource DefaultButton}"
+                <Button Content="{StaticResource openFolder}" Command="{Binding LoadMachineCommand}"
+                        IsEnabled="{Binding IsControlsEnabled}" Style="{StaticResource DefaultButton}"
                         ToolTip="Загрузить программу" />
                 <Button Content="{StaticResource save}" Style="{StaticResource DefaultButton}"
+                        Command="{Binding SaveMachineCommand}" IsEnabled="{Binding IsControlsEnabled}"
                         ToolTip="Сохранить программу" />
-                <Button Command="{Binding SaveMachineCommand}"
+                <Button Command="{Binding SaveTapeCommand}"
                         Content="{StaticResource saveTape}" Style="{StaticResource DefaultButton}"
-                        ToolTip="Сохранить ленту" Click="Button_Click" />
-                <Button Content="{StaticResource openTape}" Style="{StaticResource DefaultButton}"
-                        ToolTip="Восстановить ленту" Click="Button_Click_1" />
+                        ToolTip="Сохранить ленту" />
+                <Button Content="{StaticResource openTape}" Command="{Binding LoadTapeCommand}"
+                        IsEnabled="{Binding IsTapeSaved }" Style="{StaticResource DefaultButton}"
+                        ToolTip="Восстановить ленту" />
             </StackPanel>
             <Rectangle Width="20" />
             <StackPanel Orientation="Horizontal">
@@ -148,7 +158,7 @@
             </Grid.RowDefinitions>
 
             <Label Grid.Row="0">Условие задачи:</Label>
-            <TextBox Grid.Row="1" />
+            <TextBox Grid.Row="1" Text="{Binding Path=Machine.Condition}" />
 
         </Grid>
 
@@ -300,7 +310,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Label Grid.Row="0">Комментарий</Label>
-                    <TextBox Grid.Row="1" />
+                    <TextBox Grid.Row="1" Text="{Binding Machine.Comment}" />
                 </Grid>
             </Grid>
         </Grid>

@@ -29,14 +29,16 @@ namespace Turing
         {
             CurrentState = States.Stopped;
             _q = 1;
-            Delay = 100;
-            Instructions = new Dictionary<char, ObservableCollection<InstructionsItem>>();
+            Delay = 1000;
+            Instructions = new SortedDictionary<char, ObservableCollection<InstructionsItem>>();
+            Instructions[' '] = new ObservableCollection<InstructionsItem> {null};
             TapeItems = new ObservableCollection<TapeItem>();
             for (int i = 0; i < _initialLenOfTape; i++)
             {
                 TapeItems.Add(new TapeItem(i));
             }
 
+            _isFirstStep = true;
             CurrentIndex = 0;
         }
 
@@ -95,6 +97,20 @@ namespace Turing
                 OnPropertyChanged();
             }
         }
+
+
+        private string _condition;
+
+        public string Condition
+        {
+            get => _condition;
+            set
+            {
+                _condition = value;
+                OnPropertyChanged();
+            }
+        }
+
 
         private string _comment;
 
@@ -156,12 +172,18 @@ namespace Turing
 
         private KeyValuePair<char, int> _previousInstruction;
 
-        [NonSerialized] private bool _isFirstStep = true;
+        private bool _isFirstStep;
+
+        private bool IsFirstStep
+        {
+            get => _isFirstStep;
+            set => _isFirstStep = value;
+        }
 
 
-        private Dictionary<char, ObservableCollection<InstructionsItem>> _instructions;
+        private SortedDictionary<char, ObservableCollection<InstructionsItem>> _instructions;
 
-        public Dictionary<char, ObservableCollection<InstructionsItem>> Instructions
+        public SortedDictionary<char, ObservableCollection<InstructionsItem>> Instructions
         {
             get => _instructions;
             set
@@ -232,7 +254,7 @@ namespace Turing
                 _nextComm = new Comm(Instructions[currentTapeItem.Letter][_q - 1].Str);
 
                 string strQ = string.Empty;
-                for (int i = 0; i < CountOfQ - 1; i++)
+                for (int i = 0; i < CountOfQ + 1; i++)
                 {
                     strQ += i.ToString();
                 }
@@ -330,9 +352,12 @@ namespace Turing
 
         public void DelColumn(int currentColumn)
         {
-            foreach (var keypair in Instructions)
+            if (CountOfQ >= 2)
             {
-                keypair.Value.RemoveAt(currentColumn);
+                foreach (var keypair in Instructions)
+                {
+                    keypair.Value.RemoveAt(currentColumn);
+                }
             }
         }
 

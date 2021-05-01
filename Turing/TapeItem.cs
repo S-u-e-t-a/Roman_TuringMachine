@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Media;
 
 namespace Turing
 {
     [Serializable]
     public class TapeItem : INotifyPropertyChanged
     {
-        private string _color;
+        private Brush _color;
         private int _index;
 
         private bool _isSelected;
@@ -25,16 +26,16 @@ namespace Turing
             set
             {
                 if (value)
-                    Color = "#ffff66"; // желтый
+                    Color = Brushes.Yellow; // желтый
                 else
-                    Color = "#ffffff"; // белый
+                    Color = Brushes.White; // белый
                 _isSelected = value;
                 OnPropertyChanged();
             }
             get => _isSelected;
         }
 
-        public string Color
+        public Brush Color
         {
             private set
             {
