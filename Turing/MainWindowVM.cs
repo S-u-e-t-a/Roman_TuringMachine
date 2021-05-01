@@ -66,7 +66,17 @@ namespace Turing
         private bool _isPauseButtonEnabled;
         private bool _isStopButtonEnabled;
         private bool _isStartButtonEnabled;
+        private bool _isControlsEnabled;
 
+        public bool IsControlsEnabled
+        {
+            get => _isControlsEnabled;
+            set
+            {
+                _isControlsEnabled = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool IsPauseButtonEnabled
         {
@@ -480,17 +490,6 @@ namespace Turing
             Machine.Instructions[' '][0] = new InstructionsItem(" >2");
             Machine.Instructions[' '][1] = new InstructionsItem(" >0");
 
-
-            //Machine.Instructions1['0'][1] = "1>2";
-            //Machine.Instructions1['1'][1] = "0>2";
-            //Machine.Instructions1[' '][0] = " >2";
-            //Machine.Instructions1[' '][1] = " >0";
-
-            /*for (int i = 0; i < 100; i++)
-            {
-                Machine.TapeItems.Add(new TapeItem(i));
-            }*/
-
             Machine.TapeItems[10].Letter = '1';
             Machine.TapeItems[11].Letter = '0';
             Machine.TapeItems[12].Letter = '1';
@@ -500,8 +499,7 @@ namespace Turing
             Machine.TapeItems[16].Letter = '1';
             Machine.TapeItems[17].Letter = '0';
             Machine.TapeItems[18].Letter = '1';
-            //Machine.CurrentIndex = 9;
-            //Machine.TapeItems[10].Color = "#ffff66";
+
 
             #endregion
         }
@@ -513,18 +511,21 @@ namespace Turing
                 IsStartButtonEnabled = true;
                 IsStopButtonEnabled = true;
                 IsPauseButtonEnabled = false;
+                IsControlsEnabled = false;
             }
             else if (e.State == States.Working)
             {
                 IsStartButtonEnabled = false;
                 IsStopButtonEnabled = true;
                 IsPauseButtonEnabled = true;
+                IsControlsEnabled = false;
             }
             else if (e.State == States.Stopped)
             {
                 IsStartButtonEnabled = true;
                 IsStopButtonEnabled = false;
                 IsPauseButtonEnabled = false;
+                IsControlsEnabled = true;
             }
         }
 

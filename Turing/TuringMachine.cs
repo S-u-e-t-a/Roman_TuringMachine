@@ -218,25 +218,20 @@ namespace Turing
 
         public void MakeStep()
         {
-            //TapeItems[CurrentIndex].IsSelected = true;
+            if (CurrentState != States.Working)
+            {
+                CurrentState = States.Paused;
+            }
             if (_previousInstruction.Key != '\0')
             {
                 Instructions[_previousInstruction.Key][_previousInstruction.Value].IsSelected = false;
             }
-
-            //previousInstruction = new KeyValuePair<char, int>(currentTapeItem.Letter, q - 1);
             if (!_isFirstStep)
             {
                 MakeInstruction(CurrentIndex, _nextComm);
             }
 
             _isFirstStep = false;
-            /*else
-            {
-                nextComm = Instructions[currentTapeItem.Letter][q - 1];
-                previousInstruction = new KeyValuePair<char, int>(currentTapeItem.Letter, q - 1);
-                //CurrentState = States.paused;
-            }*/
             var currentTapeItem = TapeItems[CurrentIndex];
             if (_q != 0)
             {

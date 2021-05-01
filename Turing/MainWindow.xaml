@@ -149,7 +149,7 @@
                     <ColumnDefinition Width="20" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0" Command="{Binding MoveLeftCommand}" Content="&lt;"
-                        ToolTip="К предыдущей ячейке" />
+                        ToolTip="К предыдущей ячейке" IsEnabled="{Binding IsControlsEnabled}" />
                 <DataGrid Grid.Column="1"
                           ColumnWidth="30"
                           IsReadOnly="True"
@@ -165,7 +165,8 @@
                           SelectedItem="{Binding Path=SelectedTapeItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           SelectedIndex="{Binding Path=SelectedIndex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                           SelectionUnit="FullRow"
-                          SelectionMode="Single">
+                          SelectionMode="Single"
+                          IsEnabled="{Binding IsControlsEnabled}">
 
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Value" Binding="{Binding Path=Letter}" />
@@ -213,7 +214,8 @@
                     </i:Interaction.Triggers>
                 </DataGrid>
                 <Button Grid.Column="2" Command="{Binding MoveRightCommand}" ToolTip="К следующей ячейке"
-                        Content="&gt;" />
+                        Content="&gt;"
+                        IsEnabled="{Binding IsControlsEnabled}"/>
             </Grid>
 
             <Grid Grid.Row="1">
@@ -234,28 +236,28 @@
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0">Алфавит</Label>
-                        <TextBox Grid.Column="1"
+                        <TextBox Grid.Column="1" IsEnabled="{Binding IsControlsEnabled}"
                                  Text="{Binding Path=Machine.Alphabet, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
                     <StackPanel Grid.Row="1" Orientation="Horizontal">
                         <Button Command="{Binding AddLeftCommand}" Content="{StaticResource addLeft}"
-                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец слева" />
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец слева" IsEnabled="{Binding IsControlsEnabled}"/>
                         <Button Command="{Binding AddRightCommand}" Content="{StaticResource addRight}"
-                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец справа" />
+                                Style="{StaticResource DefaultButton}" ToolTip="Вставить столбец справа" IsEnabled="{Binding IsControlsEnabled}"/>
                         <Button Command="{Binding DelColumnCommand}" Style="{StaticResource DefaultButton}"
-                                Content="{StaticResource delColumn}" ToolTip="Удалить столбец" />
+                                Content="{StaticResource delColumn}" ToolTip="Удалить столбец" IsEnabled="{Binding IsControlsEnabled}"/>
                     </StackPanel>
 
                     <DataGrid Grid.Row="2" x:Name="dg" AutoGenerateColumns="True"
-
+                              IsEnabled="{Binding IsControlsEnabled}"
                               dataGrid2D:ItemsSource.RowsSource="{Binding Machine.Instructions.Values}"
                               dataGrid2D:ItemsSource.ColumnHeadersSource="{Binding ColumnHeaders}"
                               dataGrid2D:ItemsSource.RowHeadersSource="{Binding RowHeaders}"
                               dataGrid2D:Selected.Index="{Binding Path=SelectedIndexIns}"
                               SelectionMode="Single" SelectionUnit="Cell"
                               dataGrid2D:Cell.EditingTemplate="{StaticResource CommEditingTemplate}"
-                              dataGrid2D:Cell.Template="{StaticResource CommTemplate}"
-                              IsReadOnly="False">
+                              dataGrid2D:Cell.Template="{StaticResource CommTemplate}">
+
 
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="MouseDown">
