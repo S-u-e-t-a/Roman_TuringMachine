@@ -28,7 +28,7 @@ namespace Turing
         public TuringMachine()
         {
             CurrentState = States.Stopped;
-            _q = 1;
+            _q = 1; 
             Delay = 1000;
             Instructions = new SortedDictionary<char, ObservableCollection<InstructionsItem>>();
             Instructions[' '] = new ObservableCollection<InstructionsItem> {null};
@@ -47,7 +47,6 @@ namespace Turing
         [field: NonSerializedAttribute] public event InstructionIsBadHandler InstructionIsBad;
 
         [field: NonSerializedAttribute] public event ProgramDoneHandler ProgramDone;
-
         #region Fields
 
         [NonSerialized] private States _currentState;

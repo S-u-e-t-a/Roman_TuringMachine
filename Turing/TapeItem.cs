@@ -8,7 +8,7 @@ namespace Turing
     [Serializable]
     public class TapeItem : INotifyPropertyChanged
     {
-        private Brush _color;
+        private string _color;
         private int _index;
 
         private bool _isSelected;
@@ -26,16 +26,16 @@ namespace Turing
             set
             {
                 if (value)
-                    Color = Brushes.Yellow; // желтый
+                    Color = "#ffff66"; // желтый
                 else
-                    Color = Brushes.White; // белый
+                    Color = null; // белый
                 _isSelected = value;
                 OnPropertyChanged();
             }
             get => _isSelected;
         }
 
-        public Brush Color
+        public string Color
         {
             private set
             {
