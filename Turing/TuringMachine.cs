@@ -31,7 +31,7 @@ namespace Turing
             _q = 1; 
             Delay = 1000;
             Instructions = new SortedDictionary<char, ObservableCollection<InstructionsItem>>();
-            Instructions[' '] = new ObservableCollection<InstructionsItem> {null};
+            Instructions[' '] = new ObservableCollection<InstructionsItem> {new InstructionsItem()};
             TapeItems = new ObservableCollection<TapeItem>();
             for (int i = 0; i < _initialLenOfTape; i++)
             {
@@ -212,6 +212,10 @@ namespace Turing
 
         private void MakeInstruction(int index, Comm ins)
         {
+            if (ins == null)
+            {
+                return;
+            }
             TapeItems[index].Letter = ins.Sym;
             _q = ins.Condition;
             if (_q != 0)
@@ -291,6 +295,7 @@ namespace Turing
 
         public async Task Calc()
         {
+            //_isFirstStep = true;
             CurrentState = States.Working;
             while (CurrentState == States.Working)
             {
@@ -336,7 +341,7 @@ namespace Turing
         {
             foreach (var keypair in Instructions)
             {
-                keypair.Value.Insert(currentColumn, null);
+                keypair.Value.Insert(currentColumn, new InstructionsItem());
             }
         }
 
@@ -344,7 +349,7 @@ namespace Turing
         {
             foreach (var keypair in Instructions)
             {
-                keypair.Value.Insert(currentColumn + 1, null);
+                keypair.Value.Insert(currentColumn + 1, new InstructionsItem());
             }
         }
 
@@ -432,6 +437,7 @@ namespace Turing
         private bool _isSelected;
         private string _str;
 
+        public InstructionsItem(){}
         public InstructionsItem(string str)
         {
             Str = str;

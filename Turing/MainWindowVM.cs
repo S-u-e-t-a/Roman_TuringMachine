@@ -664,9 +664,9 @@ namespace Turing
             Machine.Alphabet = "01 ";
             Machine.Instructions = new SortedDictionary<char, ObservableCollection<InstructionsItem>>();
 
-            Machine.Instructions['0'] = new ObservableCollection<InstructionsItem> {null, null, null, null};
-            Machine.Instructions['1'] = new ObservableCollection<InstructionsItem> {null, null, null, null};
-            Machine.Instructions[' '] = new ObservableCollection<InstructionsItem> {null, null, null, null};
+            Machine.Instructions['0'] = new ObservableCollection<InstructionsItem> {new InstructionsItem(), new InstructionsItem(), new InstructionsItem(), new InstructionsItem()};
+            Machine.Instructions['1'] = new ObservableCollection<InstructionsItem> { new InstructionsItem(), new InstructionsItem(), new InstructionsItem(), new InstructionsItem() };
+            Machine.Instructions[' '] = new ObservableCollection<InstructionsItem> { new InstructionsItem(), new InstructionsItem(), new InstructionsItem(), new InstructionsItem() };
 
             Machine.Instructions['0'][1] = new InstructionsItem("1>2");
             Machine.Instructions['1'][1] = new InstructionsItem("0>2");
